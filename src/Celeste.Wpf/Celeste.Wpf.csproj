@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0-windows;net10.0-windows</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>Celeste.Wpf</RootNamespace>
+    <AssemblyName>Celeste.Wpf</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Label="NuGet">
+    <IsPackable>true</IsPackable>
+    <PackageId>Celeste.Wpf</PackageId>
+    <Version>0.1.0-alpha.1</Version>
+    <Description>A modern, themeable UI library for WPF: semantic design tokens, light/dark themes, restyled native controls, and the controls WPF never shipped.</Description>
+    <PackageTags>wpf;ui;xaml;theme;dark-mode;controls;design-system;dotnet</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

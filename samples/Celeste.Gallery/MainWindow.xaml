@@ -1,0 +1,304 @@
+<Window x:Class="Celeste.Gallery.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:celeste="https://celeste-ui.dev/wpf"
+        Title="Celeste Gallery"
+        Width="1040"
+        Height="760"
+        Style="{StaticResource Celeste.Window}"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--  Header  -->
+        <Grid Margin="0,0,0,20">
+            <StackPanel>
+                <TextBlock Style="{StaticResource Celeste.TextBlock.Title}" Text="Celeste" />
+                <TextBlock Margin="0,4,0,0"
+                           Style="{StaticResource Celeste.TextBlock.Muted}"
+                           Text="A modern, themeable UI library for WPF." />
+            </StackPanel>
+
+            <StackPanel HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                <TextBlock Margin="0,0,10,0"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource Celeste.TextBlock.Muted}"
+                           Text="Theme" />
+                <ComboBox x:Name="ThemeSelector"
+                          Width="140"
+                          SelectionChanged="OnThemeSelectionChanged">
+                    <ComboBoxItem Content="System" />
+                    <ComboBoxItem Content="Light" />
+                    <ComboBoxItem Content="Dark" />
+                </ComboBox>
+            </StackPanel>
+        </Grid>
+
+        <TabControl Grid.Row="1">
+
+            <!--  ===========  Buttons  ===========  -->
+            <TabItem Header="Buttons">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <celeste:Card Header="Variants" Description="Every button shares one template; only the color tokens differ.">
+                            <WrapPanel ItemHeight="46">
+                                <Button Margin="0,0,10,0" Content="Secondary" />
+                                <Button Margin="0,0,10,0"
+                                        Content="Primary"
+                                        Style="{StaticResource Celeste.Button.Primary}" />
+                                <Button Margin="0,0,10,0"
+                                        Content="Destructive"
+                                        Style="{StaticResource Celeste.Button.Destructive}" />
+                                <Button Margin="0,0,10,0"
+                                        Content="Outline"
+                                        Style="{StaticResource Celeste.Button.Outline}" />
+                                <Button Margin="0,0,10,0"
+                                        Content="Ghost"
+                                        Style="{StaticResource Celeste.Button.Ghost}" />
+                                <Button Margin="0,0,10,0"
+                                        Content="Link"
+                                        Style="{StaticResource Celeste.Button.Link}" />
+                                <Button Margin="0,0,10,0"
+                                        Content="Disabled"
+                                        IsEnabled="False" />
+                            </WrapPanel>
+                        </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0"
+                                      Header="Sizes"
+                                      Description="Small, default, and large share the same vertical rhythm.">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Margin="0,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Content="Small"
+                                        Style="{StaticResource Celeste.Button.Small}" />
+                                <Button Margin="0,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Content="Default" />
+                                <Button VerticalAlignment="Center"
+                                        Content="Large"
+                                        Style="{StaticResource Celeste.Button.Large}" />
+                            </StackPanel>
+                        </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0"
+                                      Header="Toggles"
+                                      Description="ToggleButton for a segmented choice, ToggleSwitch for a setting that applies immediately.">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <ToggleButton Margin="0,0,8,0"
+                                                  Content="Day"
+                                                  IsChecked="True"
+                                                  Style="{StaticResource Celeste.ToggleButton}" />
+                                    <ToggleButton Margin="0,0,8,0"
+                                                  Content="Week"
+                                                  Style="{StaticResource Celeste.ToggleButton}" />
+                                    <ToggleButton Content="Month" Style="{StaticResource Celeste.ToggleButton}" />
+                                </StackPanel>
+                                <celeste:ToggleSwitch Margin="0,16,0,0"
+                                                      Content="Enable notifications"
+                                                      IsChecked="True" />
+                                <celeste:ToggleSwitch Margin="0,10,0,0" Content="Send anonymous usage data" />
+                                <celeste:ToggleSwitch Margin="0,10,0,0"
+                                                      Content="Unavailable on this plan"
+                                                      IsEnabled="False" />
+                            </StackPanel>
+                        </celeste:Card>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!--  ===========  Inputs  ===========  -->
+            <TabItem Header="Inputs">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <celeste:Card Header="Text" Description="Placeholders come from an attached property, so they never leak into Text.">
+                            <StackPanel>
+                                <Label Content="Workspace name" Target="{Binding ElementName=NameBox}" />
+                                <TextBox x:Name="NameBox" celeste:ControlHelper.PlaceholderText="e.g. Northwind" />
+
+                                <Label Margin="0,14,0,0" Content="API token" />
+                                <PasswordBox />
+
+                                <Label Margin="0,14,0,0" Content="Notes" />
+                                <TextBox celeste:ControlHelper.PlaceholderText="Anything the team should know…" Style="{StaticResource Celeste.TextBox.Multiline}" />
+
+                                <Label Margin="0,14,0,0" Content="Read-only" />
+                                <TextBox IsReadOnly="True" Text="Cannot be edited" />
+                            </StackPanel>
+                        </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0" Header="Choice">
+                            <StackPanel>
+                                <Label Content="Region" />
+                                <ComboBox Width="240"
+                                          HorizontalAlignment="Left"
+                                          celeste:ControlHelper.PlaceholderText="Select a region">
+                                    <ComboBoxItem Content="South America" />
+                                    <ComboBoxItem Content="North America" />
+                                    <ComboBoxItem Content="Europe" />
+                                    <ComboBoxItem Content="Asia Pacific" />
+                                </ComboBox>
+
+                                <StackPanel Margin="0,16,0,0">
+                                    <CheckBox Content="Ship weekly digest" IsChecked="True" />
+                                    <CheckBox Margin="0,8,0,0" Content="Include draft items" />
+                                    <CheckBox Margin="0,8,0,0"
+                                              Content="Partially selected"
+                                              IsChecked="{x:Null}"
+                                              IsThreeState="True" />
+                                    <CheckBox Margin="0,8,0,0"
+                                              Content="Locked by policy"
+                                              IsEnabled="False" />
+                                </StackPanel>
+
+                                <StackPanel Margin="0,16,0,0">
+                                    <RadioButton Content="Automatic" IsChecked="True" />
+                                    <RadioButton Margin="0,8,0,0" Content="Manual" />
+                                    <RadioButton Margin="0,8,0,0"
+                                                 Content="Scheduled"
+                                                 IsEnabled="False" />
+                                </StackPanel>
+                            </StackPanel>
+                        </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0" Header="Range">
+                            <StackPanel>
+                                <Slider Maximum="100"
+                                        Minimum="0"
+                                        Value="35" />
+                                <Slider Margin="0,12,0,0"
+                                        IsEnabled="False"
+                                        Maximum="100"
+                                        Value="70" />
+                            </StackPanel>
+                        </celeste:Card>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!--  ===========  Display  ===========  -->
+            <TabItem Header="Display">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <celeste:Card Header="Badges">
+                            <WrapPanel>
+                                <celeste:Badge Margin="0,0,8,0" Content="Neutral" />
+                                <celeste:Badge Margin="0,0,8,0"
+                                               Content="Primary"
+                                               Variant="Primary" />
+                                <celeste:Badge Margin="0,0,8,0"
+                                               Content="Passing"
+                                               Variant="Success" />
+                                <celeste:Badge Margin="0,0,8,0"
+                                               Content="Deprecated"
+                                               Variant="Warning" />
+                                <celeste:Badge Margin="0,0,8,0"
+                                               Content="Failed"
+                                               Variant="Danger" />
+                                <celeste:Badge Content="Outline" Variant="Outline" />
+                            </WrapPanel>
+                        </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0" Header="Progress">
+                            <StackPanel>
+                                <ProgressBar Value="42" />
+                                <ProgressBar Margin="0,12,0,0" IsIndeterminate="True" />
+                                <StackPanel Margin="0,16,0,0" Orientation="Horizontal">
+                                    <celeste:ProgressRing VerticalAlignment="Center" />
+                                    <TextBlock Margin="12,0,0,0"
+                                               VerticalAlignment="Center"
+                                               Style="{StaticResource Celeste.TextBlock.Muted}"
+                                               Text="Syncing workspace…" />
+                                </StackPanel>
+                            </StackPanel>
+                        </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0" Header="Elevation">
+                            <StackPanel Orientation="Horizontal">
+                                <celeste:Card Width="180"
+                                              Margin="0,0,16,0"
+                                              Content="Flat"
+                                              Elevation="Flat" />
+                                <celeste:Card Width="180"
+                                              Margin="0,0,16,0"
+                                              Content="Low"
+                                              Elevation="Low" />
+                                <celeste:Card Width="180"
+                                              Content="High"
+                                              Elevation="High" />
+                            </StackPanel>
+                        </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0"
+                                      Header="Card with a footer"
+                                      Description="Header, description, content, and footer are independent.">
+                            <TextBlock Style="{StaticResource Celeste.TextBlock.Muted}"
+                                       Text="Deleting a workspace removes every project inside it. This cannot be undone."
+                                       TextWrapping="Wrap" />
+                            <celeste:Card.Footer>
+                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                    <Button Margin="0,0,8,0"
+                                            Content="Cancel"
+                                            Style="{StaticResource Celeste.Button.Ghost}" />
+                                    <Button Content="Delete workspace" Style="{StaticResource Celeste.Button.Destructive}" />
+                                </StackPanel>
+                            </celeste:Card.Footer>
+                        </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0" Header="List">
+                            <ListBox Height="160">
+                                <ListBoxItem Content="analytics-service" />
+                                <ListBoxItem Content="billing-worker" />
+                                <ListBoxItem Content="edge-gateway" />
+                                <ListBoxItem Content="identity-provider" />
+                                <ListBoxItem Content="notification-relay" />
+                                <ListBoxItem Content="search-indexer" />
+                                <ListBoxItem Content="webhooks-dispatcher" />
+                            </ListBox>
+                        </celeste:Card>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!--  ===========  Typography  ===========  -->
+            <TabItem Header="Typography">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <celeste:Card Header="Type scale">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Celeste.TextBlock.Display}" Text="Display 34" />
+                            <TextBlock Margin="0,8,0,0"
+                                       Style="{StaticResource Celeste.TextBlock.Title}"
+                                       Text="Title 24" />
+                            <TextBlock Margin="0,8,0,0"
+                                       Style="{StaticResource Celeste.TextBlock.Subtitle}"
+                                       Text="Subtitle 18" />
+                            <TextBlock Margin="0,8,0,0"
+                                       Style="{StaticResource Celeste.TextBlock.Strong}"
+                                       Text="Body strong 13" />
+                            <TextBlock Margin="0,8,0,0"
+                                       Style="{StaticResource Celeste.TextBlock.Body}"
+                                       Text="Body 13 — the default reading size." />
+                            <TextBlock Margin="0,8,0,0"
+                                       Style="{StaticResource Celeste.TextBlock.Muted}"
+                                       Text="Muted 13 — secondary information." />
+                            <TextBlock Margin="0,8,0,0"
+                                       Style="{StaticResource Celeste.TextBlock.Caption}"
+                                       Text="CAPTION 11 — labels and metadata." />
+                            <TextBlock Margin="0,8,0,0"
+                                       Style="{StaticResource Celeste.TextBlock.Code}"
+                                       Text="Code 13 — ThemeManager.Apply(ApplicationTheme.Dark);" />
+                        </StackPanel>
+                    </celeste:Card>
+                </ScrollViewer>
+            </TabItem>
+
+        </TabControl>
+    </Grid>
+</Window>

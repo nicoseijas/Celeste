@@ -1,0 +1,282 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Celeste.Wpf.Controls">
+
+    <!--
+        One template for every button variant. Variants differ only in the Background /
+        BorderBrush / Foreground the style feeds it, so hover and pressed states are expressed as
+        style triggers on the control rather than as template triggers. That keeps a new variant to
+        a dozen lines and one template in the visual tree.
+    -->
+    <ControlTemplate x:Key="Celeste.Template.Button" TargetType="{x:Type ButtonBase}">
+        <Grid Background="Transparent">
+            <Border x:Name="FocusRing"
+                    Margin="-3"
+                    BorderBrush="{DynamicResource Celeste.Brush.Ring}"
+                    BorderThickness="2"
+                    CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(controls:ControlHelper.CornerRadius)}"
+                    Opacity="0"
+                    SnapsToDevicePixels="True" />
+
+            <Border x:Name="Root"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(controls:ControlHelper.CornerRadius)}"
+                    SnapsToDevicePixels="True">
+                <StackPanel Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Orientation="Horizontal">
+                    <ContentPresenter x:Name="Icon"
+                                      Margin="0,0,6,0"
+                                      VerticalAlignment="Center"
+                                      Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(controls:ControlHelper.IconContent)}"
+                                      Focusable="False" />
+                    <ContentPresenter x:Name="Content"
+                                      VerticalAlignment="Center"
+                                      Focusable="False"
+                                      RecognizesAccessKey="True"
+                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <ControlTemplate.Triggers>
+            <Trigger SourceName="Icon" Property="Content" Value="{x:Null}">
+                <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter TargetName="FocusRing" Property="Opacity" Value="1" />
+            </Trigger>
+            <Trigger Property="Content" Value="{x:Null}">
+                <Setter TargetName="Content" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!--  Base: metrics and behavior, no color opinion.  -->
+    <Style x:Key="Celeste.Button.Base" TargetType="{x:Type Button}">
+        <Setter Property="controls:ControlHelper.CornerRadius" Value="{DynamicResource Celeste.Radius.Md}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Celeste.FontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Body}" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="MinHeight" Value="{DynamicResource Celeste.Control.HeightMd}" />
+        <Setter Property="Padding" Value="{DynamicResource Celeste.Control.PaddingMd}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template" Value="{StaticResource Celeste.Template.Button}" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Disabled}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.DisabledBorder}" />
+                <Setter Property="Cursor" Value="Arrow" />
+                <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--  Default (secondary): the safe choice when a screen has several buttons.  -->
+    <Style x:Key="Celeste.Button.Secondary"
+           BasedOn="{StaticResource Celeste.Button.Base}"
+           TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Secondary}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.Border}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.SecondaryForeground}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.SecondaryHover}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.BorderStrong}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.SecondaryPressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Disabled}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.DisabledBorder}" />
+                <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style BasedOn="{StaticResource Celeste.Button.Secondary}" TargetType="{x:Type Button}" />
+
+    <Style x:Key="Celeste.Button.Primary"
+           BasedOn="{StaticResource Celeste.Button.Base}"
+           TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Primary}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.Primary}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.PrimaryForeground}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.PrimaryHover}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.PrimaryHover}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.PrimaryPressed}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.PrimaryPressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Disabled}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.DisabledBorder}" />
+                <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Celeste.Button.Destructive"
+           BasedOn="{StaticResource Celeste.Button.Base}"
+           TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Destructive}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.Destructive}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DestructiveForeground}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.DestructiveHover}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.DestructiveHover}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.DestructivePressed}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.DestructivePressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Disabled}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.DisabledBorder}" />
+                <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Celeste.Button.Outline"
+           BasedOn="{StaticResource Celeste.Button.Base}"
+           TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.BorderStrong}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Foreground}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Accent}" />
+                <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.AccentForeground}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.SecondaryPressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.DisabledBorder}" />
+                <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Celeste.Button.Ghost"
+           BasedOn="{StaticResource Celeste.Button.Base}"
+           TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Foreground}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Secondary}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.SecondaryPressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Celeste.Button.Link"
+           BasedOn="{StaticResource Celeste.Button.Ghost}"
+           TargetType="{x:Type Button}">
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Primary}" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Padding" Value="2,0" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.PrimaryHover}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.PrimaryPressed}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--  Size modifiers. Combine with a variant by setting BasedOn in your own style.  -->
+    <Style x:Key="Celeste.Button.Small"
+           BasedOn="{StaticResource Celeste.Button.Secondary}"
+           TargetType="{x:Type Button}">
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Caption}" />
+        <Setter Property="MinHeight" Value="{DynamicResource Celeste.Control.HeightSm}" />
+        <Setter Property="Padding" Value="{DynamicResource Celeste.Control.PaddingSm}" />
+    </Style>
+
+    <Style x:Key="Celeste.Button.Large"
+           BasedOn="{StaticResource Celeste.Button.Primary}"
+           TargetType="{x:Type Button}">
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.BodyLarge}" />
+        <Setter Property="MinHeight" Value="{DynamicResource Celeste.Control.HeightLg}" />
+        <Setter Property="Padding" Value="{DynamicResource Celeste.Control.PaddingLg}" />
+    </Style>
+
+    <!--  ToggleButton as a segmented / pill toggle. Lives here because it shares the button template.  -->
+    <Style x:Key="Celeste.ToggleButton" TargetType="{x:Type ToggleButton}">
+        <Setter Property="controls:ControlHelper.CornerRadius" Value="{DynamicResource Celeste.Radius.Md}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.Border}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Celeste.FontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Body}" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Foreground}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="MinHeight" Value="{DynamicResource Celeste.Control.HeightMd}" />
+        <Setter Property="Padding" Value="{DynamicResource Celeste.Control.PaddingMd}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template" Value="{StaticResource Celeste.Template.Button}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Secondary}" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Accent}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.Primary}" />
+                <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.AccentForeground}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Disabled}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.DisabledBorder}" />
+                <Setter Property="Cursor" Value="Arrow" />
+                <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--  RepeatButton: used by ScrollBar and Slider; kept invisible there, styled here for direct use.  -->
+    <Style x:Key="Celeste.RepeatButton" TargetType="{x:Type RepeatButton}">
+        <Setter Property="controls:ControlHelper.CornerRadius" Value="{DynamicResource Celeste.Radius.Md}" />
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Secondary}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.Border}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.SecondaryForeground}" />
+        <Setter Property="MinHeight" Value="{DynamicResource Celeste.Control.HeightMd}" />
+        <Setter Property="Padding" Value="{DynamicResource Celeste.Control.PaddingMd}" />
+        <Setter Property="Template" Value="{StaticResource Celeste.Template.Button}" />
+    </Style>
+
+</ResourceDictionary>

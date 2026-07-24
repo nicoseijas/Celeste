@@ -1,0 +1,26 @@
+<!--
+    Celeste — type scale. Theme-independent.
+
+    The font family is a fallback chain: Segoe UI Variable ships with Windows 11, Segoe UI with
+    Windows 10, and the generic families cover the rest.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <FontFamily x:Key="Celeste.FontFamily">Segoe UI Variable Text, Segoe UI, Segoe UI Emoji</FontFamily>
+    <FontFamily x:Key="Celeste.FontFamily.Display">Segoe UI Variable Display, Segoe UI, Segoe UI Emoji</FontFamily>
+    <FontFamily x:Key="Celeste.FontFamily.Mono">Cascadia Mono, Consolas, Courier New</FontFamily>
+
+    <sys:Double x:Key="Celeste.FontSize.Caption">11</sys:Double>
+    <sys:Double x:Key="Celeste.FontSize.Body">13</sys:Double>
+    <sys:Double x:Key="Celeste.FontSize.BodyLarge">15</sys:Double>
+    <sys:Double x:Key="Celeste.FontSize.Subtitle">18</sys:Double>
+    <sys:Double x:Key="Celeste.FontSize.Title">24</sys:Double>
+    <sys:Double x:Key="Celeste.FontSize.Display">34</sys:Double>
+
+    <FontWeight x:Key="Celeste.FontWeight.Regular">Normal</FontWeight>
+    <FontWeight x:Key="Celeste.FontWeight.Medium">Medium</FontWeight>
+    <FontWeight x:Key="Celeste.FontWeight.SemiBold">SemiBold</FontWeight>
+
+</ResourceDictionary>

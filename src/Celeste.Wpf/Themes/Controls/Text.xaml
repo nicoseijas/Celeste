@@ -1,0 +1,91 @@
+<!--
+    Celeste — text styles.
+
+    Deliberately NO implicit TextBlock style. An implicit style sets FontSize/Foreground on the
+    TextBlock that a ContentPresenter generates for string content, which silently overrides the
+    values a Button or a ComboBoxItem passes down by inheritance. Font and foreground defaults come
+    from the Celeste.Window style at the root of the tree instead, so inheritance keeps working.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="Celeste.TextBlock.Body" TargetType="{x:Type TextBlock}">
+        <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
+        <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+
+    <Style x:Key="Celeste.TextBlock.Caption"
+           BasedOn="{StaticResource Celeste.TextBlock.Body}"
+           TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Caption}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.MutedForeground}" />
+    </Style>
+
+    <Style x:Key="Celeste.TextBlock.Muted"
+           BasedOn="{StaticResource Celeste.TextBlock.Body}"
+           TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.MutedForeground}" />
+    </Style>
+
+    <Style x:Key="Celeste.TextBlock.Strong"
+           BasedOn="{StaticResource Celeste.TextBlock.Body}"
+           TargetType="{x:Type TextBlock}">
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style x:Key="Celeste.TextBlock.Subtitle"
+           BasedOn="{StaticResource Celeste.TextBlock.Body}"
+           TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Subtitle}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style x:Key="Celeste.TextBlock.Title"
+           BasedOn="{StaticResource Celeste.TextBlock.Body}"
+           TargetType="{x:Type TextBlock}">
+        <Setter Property="FontFamily" Value="{DynamicResource Celeste.FontFamily.Display}" />
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Title}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style x:Key="Celeste.TextBlock.Display"
+           BasedOn="{StaticResource Celeste.TextBlock.Body}"
+           TargetType="{x:Type TextBlock}">
+        <Setter Property="FontFamily" Value="{DynamicResource Celeste.FontFamily.Display}" />
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Display}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style x:Key="Celeste.TextBlock.Code"
+           BasedOn="{StaticResource Celeste.TextBlock.Body}"
+           TargetType="{x:Type TextBlock}">
+        <Setter Property="FontFamily" Value="{DynamicResource Celeste.FontFamily.Mono}" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+    </Style>
+
+    <Style TargetType="{x:Type Label}">
+        <Setter Property="Padding" Value="0,0,0,4" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type Separator}">
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Border}" />
+        <Setter Property="Margin" Value="0,8" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Separator}">
+                    <Rectangle Height="1"
+                               Fill="{TemplateBinding Background}"
+                               SnapsToDevicePixels="True" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

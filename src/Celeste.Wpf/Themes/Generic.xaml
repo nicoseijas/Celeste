@@ -1,0 +1,22 @@
+<!--
+    WPF looks here for the default style of every Celeste custom control. It intentionally holds
+    ONLY the custom-control styles: the styles for built-in WPF controls must not apply to an
+    application that has not opted in via <celeste:ControlsDictionary />.
+
+    Color tokens still come from the application's ThemesDictionary. A custom control dropped into
+    an app that merged nothing will render with unresolved brushes.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Celeste.Wpf;component/Themes/Tokens/Layout.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Celeste.Wpf;component/Themes/Tokens/Typography.xaml" />
+
+        <ResourceDictionary Source="pack://application:,,,/Celeste.Wpf;component/Themes/Controls/Card.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Celeste.Wpf;component/Themes/Controls/Badge.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Celeste.Wpf;component/Themes/Controls/ToggleSwitch.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Celeste.Wpf;component/Themes/Controls/ProgressRing.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

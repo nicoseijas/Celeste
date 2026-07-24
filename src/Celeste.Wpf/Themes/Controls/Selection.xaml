@@ -1,0 +1,172 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Celeste.Wpf.Controls">
+
+    <Style x:Key="Celeste.CheckBox" TargetType="{x:Type CheckBox}">
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Surface}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.InputHover}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Celeste.FontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Body}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Foreground}" />
+        <Setter Property="Padding" Value="8,0,0,0" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CheckBox}">
+                    <Grid Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Width="18" Height="18" VerticalAlignment="Center">
+                            <Border x:Name="FocusRing"
+                                    Margin="-3"
+                                    BorderBrush="{DynamicResource Celeste.Brush.Ring}"
+                                    BorderThickness="2"
+                                    CornerRadius="{DynamicResource Celeste.Radius.Sm}"
+                                    Opacity="0" />
+                            <Border x:Name="Box"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="{DynamicResource Celeste.Radius.Sm}" />
+                            <Path x:Name="Check"
+                                  Width="11"
+                                  Height="9"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Data="M0,4.6 L3.8,8.4 L10.6,0.6"
+                                  Opacity="0"
+                                  Stretch="Uniform"
+                                  Stroke="{DynamicResource Celeste.Brush.PrimaryForeground}"
+                                  StrokeEndLineCap="Round"
+                                  StrokeStartLineCap="Round"
+                                  StrokeThickness="2" />
+                            <Rectangle x:Name="Indeterminate"
+                                       Width="9"
+                                       Height="2"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Fill="{DynamicResource Celeste.Brush.PrimaryForeground}"
+                                       Opacity="0"
+                                       RadiusX="1"
+                                       RadiusY="1" />
+                        </Grid>
+
+                        <ContentPresenter x:Name="Content"
+                                          Grid.Column="1"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          RecognizesAccessKey="True" />
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Box" Property="Background" Value="{DynamicResource Celeste.Brush.Primary}" />
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Celeste.Brush.Primary}" />
+                            <Setter TargetName="Check" Property="Opacity" Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="{x:Null}">
+                            <Setter TargetName="Box" Property="Background" Value="{DynamicResource Celeste.Brush.Primary}" />
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Celeste.Brush.Primary}" />
+                            <Setter TargetName="Indeterminate" Property="Opacity" Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Celeste.Brush.Primary}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="FocusRing" Property="Opacity" Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Cursor" Value="Arrow" />
+                            <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+                            <Setter TargetName="Box" Property="Background" Value="{DynamicResource Celeste.Brush.Disabled}" />
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Celeste.Brush.DisabledBorder}" />
+                            <Setter TargetName="Check" Property="Stroke" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+                            <Setter TargetName="Indeterminate" Property="Fill" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource Celeste.CheckBox}" TargetType="{x:Type CheckBox}" />
+
+    <Style x:Key="Celeste.RadioButton" TargetType="{x:Type RadioButton}">
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Surface}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.InputHover}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Celeste.FontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Body}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Foreground}" />
+        <Setter Property="Padding" Value="8,0,0,0" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RadioButton}">
+                    <Grid Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Width="18" Height="18" VerticalAlignment="Center">
+                            <Ellipse x:Name="FocusRing"
+                                     Margin="-3"
+                                     Opacity="0"
+                                     Stroke="{DynamicResource Celeste.Brush.Ring}"
+                                     StrokeThickness="2" />
+                            <Ellipse x:Name="Box"
+                                     Fill="{TemplateBinding Background}"
+                                     Stroke="{TemplateBinding BorderBrush}"
+                                     StrokeThickness="1" />
+                            <Ellipse x:Name="Dot"
+                                     Width="8"
+                                     Height="8"
+                                     Fill="{DynamicResource Celeste.Brush.PrimaryForeground}"
+                                     Opacity="0" />
+                        </Grid>
+
+                        <ContentPresenter Grid.Column="1"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          RecognizesAccessKey="True" />
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Box" Property="Fill" Value="{DynamicResource Celeste.Brush.Primary}" />
+                            <Setter TargetName="Box" Property="Stroke" Value="{DynamicResource Celeste.Brush.Primary}" />
+                            <Setter TargetName="Dot" Property="Opacity" Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Box" Property="Stroke" Value="{DynamicResource Celeste.Brush.Primary}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="FocusRing" Property="Opacity" Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Cursor" Value="Arrow" />
+                            <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+                            <Setter TargetName="Box" Property="Fill" Value="{DynamicResource Celeste.Brush.Disabled}" />
+                            <Setter TargetName="Box" Property="Stroke" Value="{DynamicResource Celeste.Brush.DisabledBorder}" />
+                            <Setter TargetName="Dot" Property="Fill" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource Celeste.RadioButton}" TargetType="{x:Type RadioButton}" />
+
+</ResourceDictionary>

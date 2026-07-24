@@ -1,0 +1,27 @@
+<!--
+    Celeste — window defaults.
+
+    Apply this style to your Window to seed the whole visual tree with the theme's font, foreground,
+    and background. Every other Celeste control relies on that inheritance, so a window that opts
+    out will look correct but will not pick up the theme's text color on plain TextBlocks.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="Celeste.Window" TargetType="{x:Type Window}">
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Background}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Foreground}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Celeste.FontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Body}" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+    </Style>
+
+    <Style x:Key="Celeste.UserControl" TargetType="{x:Type UserControl}">
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Background}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Foreground}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Celeste.FontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Body}" />
+    </Style>
+
+</ResourceDictionary>
