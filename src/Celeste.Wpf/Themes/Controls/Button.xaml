@@ -213,7 +213,12 @@
         </Style.Triggers>
     </Style>
 
-    <!--  Size modifiers. Combine with a variant by setting BasedOn in your own style.  -->
+    <!--
+        Size modifiers. Both sit on the default variant, so applying one changes the metrics and
+        nothing else — a large button is not a primary button that happens to be large.
+        WPF styles do not compose, so a large primary button is a style of your own: BasedOn the
+        variant you want, then repeat the three setters below.
+    -->
     <Style x:Key="Celeste.Button.Small"
            BasedOn="{StaticResource Celeste.Button.Secondary}"
            TargetType="{x:Type Button}">
@@ -223,7 +228,7 @@
     </Style>
 
     <Style x:Key="Celeste.Button.Large"
-           BasedOn="{StaticResource Celeste.Button.Primary}"
+           BasedOn="{StaticResource Celeste.Button.Secondary}"
            TargetType="{x:Type Button}">
         <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.BodyLarge}" />
         <Setter Property="MinHeight" Value="{DynamicResource Celeste.Control.HeightLg}" />

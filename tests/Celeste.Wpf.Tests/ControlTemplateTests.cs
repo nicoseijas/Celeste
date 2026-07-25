@@ -84,23 +84,46 @@ public class ControlTemplateTests
     {
         StaTestHost.Run(() =>
         {
-            Color primary = BackgroundOf("Celeste.Button.Primary");
-            Color destructive = BackgroundOf("Celeste.Button.Destructive");
+            Color primary = BackgroundOf(Styled("Celeste.Button.Primary"));
+            Color destructive = BackgroundOf(Styled("Celeste.Button.Destructive"));
 
             Assert.NotEqual(primary, destructive);
         });
+    }
 
-        static Color BackgroundOf(string styleKey)
+    /// <summary>
+    /// A size modifier changes metrics and nothing else. Basing one on a variant instead of on the
+    /// default recolors every button that only asked to be bigger.
+    /// </summary>
+    [Fact]
+    public void SizeStylesChangeTheMetricsAndNotTheVariant()
+    {
+        StaTestHost.Run(() =>
         {
-            var button = new Button
-            {
-                Content = "x",
-                Style = (Style)Application.Current.FindResource(styleKey),
-            };
+            var small = Styled("Celeste.Button.Small");
+            var medium = new Button { Content = "x" };
+            var large = Styled("Celeste.Button.Large");
 
-            AssertTemplateApplies(button);
-            return ((SolidColorBrush)button.Background).Color;
-        }
+            Color defaultVariant = BackgroundOf(medium);
+            Assert.Equal(defaultVariant, BackgroundOf(small));
+            Assert.Equal(defaultVariant, BackgroundOf(large));
+
+            // DesiredSize, not ActualHeight: the test host stretches the button to fill its parent.
+            Assert.True(small.DesiredSize.Height < medium.DesiredSize.Height, "Small measured no smaller than the default.");
+            Assert.True(medium.DesiredSize.Height < large.DesiredSize.Height, "Large measured no larger than the default.");
+        });
+    }
+
+    private static Button Styled(string styleKey) => new()
+    {
+        Content = "x",
+        Style = (Style)Application.Current.FindResource(styleKey),
+    };
+
+    private static Color BackgroundOf(Button button)
+    {
+        AssertTemplateApplies(button);
+        return ((SolidColorBrush)button.Background).Color;
     }
 
     private static FrameworkElement Create(string controlName) => controlName switch
