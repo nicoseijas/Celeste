@@ -63,6 +63,7 @@ public class ThemeDictionaryTests
     [InlineData("Celeste.Button.Small")]
     [InlineData("Celeste.Button.Large")]
     [InlineData("Celeste.ToggleButton")]
+    [InlineData("Celeste.ToggleButton.Segment")]
     [InlineData("Celeste.TextBox.Multiline")]
     [InlineData("Celeste.ScrollViewer")]
     [InlineData("Celeste.TextBlock.Title")]

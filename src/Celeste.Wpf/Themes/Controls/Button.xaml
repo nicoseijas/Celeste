@@ -271,6 +271,17 @@
         </Style.Triggers>
     </Style>
 
+    <!--
+        Segment: one option of a segmented choice — Day / Week / Month, list / grid, and so on.
+        A RadioButton rather than a ToggleButton, because the two rules that make a row of buttons
+        a single choice belong to RadioButton and not to the style: checking one clears the others
+        in the same GroupName, and clicking the checked one keeps it checked instead of leaving the
+        choice empty. Set GroupName on the options; the appearance is Celeste.ToggleButton's.
+    -->
+    <Style x:Key="Celeste.ToggleButton.Segment"
+           BasedOn="{StaticResource Celeste.ToggleButton}"
+           TargetType="{x:Type RadioButton}" />
+
     <!--  RepeatButton: used by ScrollBar and Slider; kept invisible there, styled here for direct use.  -->
     <Style x:Key="Celeste.RepeatButton" TargetType="{x:Type RepeatButton}">
         <Setter Property="controls:ControlHelper.CornerRadius" Value="{DynamicResource Celeste.Radius.Md}" />

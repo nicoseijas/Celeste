@@ -89,17 +89,21 @@
 
                         <celeste:Card Margin="0,16,0,0"
                                       Header="Toggles"
-                                      Description="ToggleButton for a segmented choice, ToggleSwitch for a setting that applies immediately.">
+                                      Description="Segments for a single choice, ToggleSwitch for a setting that applies immediately.">
                             <StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <ToggleButton Margin="0,0,8,0"
-                                                  Content="Day"
-                                                  IsChecked="True"
-                                                  Style="{StaticResource Celeste.ToggleButton}" />
-                                    <ToggleButton Margin="0,0,8,0"
-                                                  Content="Week"
-                                                  Style="{StaticResource Celeste.ToggleButton}" />
-                                    <ToggleButton Content="Month" Style="{StaticResource Celeste.ToggleButton}" />
+                                <StackPanel x:Name="RangeToggles" Orientation="Horizontal">
+                                    <RadioButton Margin="0,0,8,0"
+                                                 Content="Day"
+                                                 GroupName="Range"
+                                                 IsChecked="True"
+                                                 Style="{StaticResource Celeste.ToggleButton.Segment}" />
+                                    <RadioButton Margin="0,0,8,0"
+                                                 Content="Week"
+                                                 GroupName="Range"
+                                                 Style="{StaticResource Celeste.ToggleButton.Segment}" />
+                                    <RadioButton Content="Month"
+                                                 GroupName="Range"
+                                                 Style="{StaticResource Celeste.ToggleButton.Segment}" />
                                 </StackPanel>
                                 <celeste:ToggleSwitch Margin="0,16,0,0"
                                                       Content="Enable notifications"

@@ -15,10 +15,14 @@ namespace Celeste.Wpf.Tests;
 /// </summary>
 public class ControlTemplateTests
 {
+    /// <summary>A keyed style rather than a type, so it needs its own row here.</summary>
+    private const string SegmentStyleKey = "Celeste.ToggleButton.Segment";
+
     public static TheoryData<string> ControlNames => new()
     {
         nameof(Button),
         nameof(ToggleButton),
+        SegmentStyleKey,
         nameof(TextBox),
         nameof(PasswordBox),
         nameof(CheckBox),
@@ -130,6 +134,11 @@ public class ControlTemplateTests
     {
         nameof(Button) => new Button { Content = "Label" },
         nameof(ToggleButton) => new ToggleButton { Content = "Label" },
+        SegmentStyleKey => new RadioButton
+        {
+            Content = "Day",
+            Style = (Style)Application.Current.FindResource(SegmentStyleKey),
+        },
         nameof(TextBox) => new TextBox { Text = "value" },
         nameof(PasswordBox) => new PasswordBox(),
         nameof(CheckBox) => new CheckBox { Content = "Label" },
