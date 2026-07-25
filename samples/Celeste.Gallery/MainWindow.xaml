@@ -40,7 +40,7 @@
             </StackPanel>
         </Grid>
 
-        <TabControl Grid.Row="1">
+        <TabControl x:Name="Sections" Grid.Row="1">
 
             <!--  ===========  Buttons  ===========  -->
             <TabItem Header="Buttons">

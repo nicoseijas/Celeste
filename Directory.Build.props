@@ -8,7 +8,12 @@
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <InvariantGlobalization>true</InvariantGlobalization>
+    <!--
+      Do NOT set InvariantGlobalization here. WPF's font fallback builds CultureInfo objects by
+      name (MS.Internal.FontCache.MajorLanguages), which throws CultureNotFoundException in
+      globalization-invariant mode. It only fails on the text that reaches the fallback path, so
+      the app crashes on one screen rather than at startup.
+    -->
   </PropertyGroup>
 
   <PropertyGroup Label="Package metadata">

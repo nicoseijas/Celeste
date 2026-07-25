@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Celeste.Wpf\Celeste.Wpf.csproj" />
+    <!-- The gallery is the reference consumer: if a tab of it throws, the library shipped a bug. -->
+    <ProjectReference Include="..\..\samples\Celeste.Gallery\Celeste.Gallery.csproj" />
   </ItemGroup>
 
 </Project>

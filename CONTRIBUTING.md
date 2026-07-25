@@ -40,7 +40,11 @@ The gallery is the fastest way to see a change. Run it, switch the theme selecto
 2. Give it a keyed style named `Celeste.<ControlName>`, then add the implicit `<Style BasedOn="..." TargetType="..." />` on the next line if the style should apply automatically.
 3. Cover the states: `IsMouseOver`, pressed or checked where it applies, `IsKeyboardFocused` (the focus ring), and `IsEnabled="False"`.
 4. Add the control to `ControlTemplateTests.ControlNames`. That test applies the template and runs a layout pass in both themes, which catches a trigger pointing at a name the template does not define.
-5. Add it to the gallery.
+5. Add it to the gallery. `GalleryTests` shows the gallery window off-screen and selects every tab in both themes, so anything you put there is exercised on a real WPF layout pass. If you add a tab, extend `GalleryTests.TabIndexes`.
+
+## Globalization
+
+Do not set `InvariantGlobalization`. WPF's font fallback builds `CultureInfo` objects by name, and in globalization-invariant mode that throws `CultureNotFoundException` from inside `TextBlock.MeasureOverride`. It only fails on text that reaches the fallback path, so the symptom is a crash on one screen rather than at startup.
 
 ## Adding a custom control
 
