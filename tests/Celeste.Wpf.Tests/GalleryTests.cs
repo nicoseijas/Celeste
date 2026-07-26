@@ -1,5 +1,8 @@
 using System.Windows;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using Celeste.Wpf.Theming;
 using Xunit;
 
@@ -21,6 +24,57 @@ public class GalleryTests
     [Theory]
     [MemberData(nameof(TabIndexes))]
     public void EveryGalleryTabRealizesInDark(int tabIndex) => AssertTabRealizes(tabIndex, ApplicationTheme.Dark);
+
+    /// <summary>
+    /// The range switch is a segmented choice: exactly one of Day / Week / Month is the current
+    /// range at any time. Three independent <see cref="ToggleButton"/> instances look segmented but
+    /// are not — each one checks and unchecks on its own, so the sample could show two ranges at
+    /// once, or none.
+    /// </summary>
+    [Fact]
+    public void TheRangeSwitchKeepsExactlyOneOptionChecked()
+    {
+        StaTestHost.Run(() =>
+        {
+            var window = new Gallery.MainWindow();
+            var toggles = ((Panel)window.FindName("RangeToggles")).Children
+                .OfType<ToggleButton>()
+                .ToList();
+
+            Assert.Equal(3, toggles.Count);
+            Assert.Single(toggles, toggle => toggle.IsChecked == true);
+
+            Click(toggles[1]);
+            Assert.Single(toggles, toggle => toggle.IsChecked == true);
+            Assert.True(toggles[1].IsChecked);
+
+            // Clicking the range that is already current cannot leave the switch empty.
+            Click(toggles[1]);
+            Assert.True(toggles[1].IsChecked);
+        });
+    }
+
+    /// <summary>
+    /// Presses a toggle the way a user does, through the automation pattern the control exposes:
+    /// a plain <see cref="ToggleButton"/> flips, an option in a group selects itself. Assigning
+    /// <see cref="ToggleButton.IsChecked"/> directly would skip exactly the behavior under test.
+    /// </summary>
+    private static void Click(ToggleButton toggle)
+    {
+        var peer = UIElementAutomationPeer.CreatePeerForElement(toggle);
+
+        switch (peer?.GetPattern(PatternInterface.SelectionItem) ?? peer?.GetPattern(PatternInterface.Toggle))
+        {
+            case ISelectionItemProvider selection:
+                selection.Select();
+                break;
+            case IToggleProvider toggleProvider:
+                toggleProvider.Toggle();
+                break;
+            default:
+                throw new InvalidOperationException($"'{toggle.Content}' exposes no way to be pressed.");
+        }
+    }
 
     private static void AssertTabRealizes(int tabIndex, ApplicationTheme theme)
     {
