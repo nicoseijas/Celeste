@@ -3,7 +3,7 @@
                     xmlns:controls="clr-namespace:Celeste.Wpf.Controls">
 
     <Style x:Key="Celeste.Badge" TargetType="{x:Type controls:Badge}">
-        <Setter Property="controls:ControlHelper.CornerRadius" Value="{DynamicResource Celeste.Radius.Pill}" />
+        <Setter Property="controls:ControlHelper.CornerRadius" Value="{DynamicResource Celeste.Radius.Md}" />
         <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Muted}" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
