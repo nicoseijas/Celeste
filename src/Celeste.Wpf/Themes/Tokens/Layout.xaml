@@ -14,7 +14,7 @@
     <sys:Double x:Key="Celeste.Space.Xl">24</sys:Double>
     <sys:Double x:Key="Celeste.Space.Xxl">32</sys:Double>
 
-    <!--  Corner radii  -->
+    <!--  Corner radius  -->
     <CornerRadius x:Key="Celeste.Radius.None">0</CornerRadius>
     <CornerRadius x:Key="Celeste.Radius.Sm">4</CornerRadius>
     <CornerRadius x:Key="Celeste.Radius.Md">6</CornerRadius>
