@@ -77,11 +77,21 @@ Secondary navigation for applications that are wider than they are deep.
 
 Named in the README as the most jarring gap. Each is a restyle of a built-in control, so it is theme-token work rather than new API.
 
+- 🔜 `Menu` and `ContextMenu`, including submenu popups, separators, icons, and input-gesture text.
+- 🔜 `Expander`.
+- 🧭 `TreeView`.
+- 🧭 `Calendar` and `DatePicker`.
+- 🧭 `DataGrid` — restyled only. Celeste is not writing a grid; it is making the one in the box stop clashing.
+- 🧭 `ToolBar`, `StatusBar`, `GroupBox`.
+
 ---
 
 ## 0.5 — Feedback and overlays
 
-Dialogs, popups, and transient notifications.
+- 🧭 `Dialog` / `ContentDialog`: modal over the window rather than a separate OS window, with focus trapping and a result-returning `await` API.
+- 🧭 `Flyout` and themed `Popup` primitives, shared with `ComboBox` and `ContextMenu` so popup shadow and radius are defined once.
+- 🧭 `Toast` / `InfoBar`: transient and inline notifications built on the existing badge palette.
+- 🧭 `Skeleton` and a busy overlay, driven by the existing `ProgressRing`.
 
 ---
 
