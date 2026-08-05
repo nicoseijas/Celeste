@@ -44,7 +44,32 @@ Optional acrylic and Mica-like backdrops on Windows 11, off by default. Celeste 
 
 ## 0.3 — Navigation
 
-Sidebars, the host they navigate, and the secondary navigation around both.
+### 🔜 `Sidebar`
+
+A vertical navigation control — the thing every one of these applications builds by hand out of a `ListBox` and a `Border`.
+
+- Items with icon, label, and an optional trailing badge; groups with headers; a footer region pinned to the bottom for settings and account entries.
+- Selection is the source of truth and is bindable, so the sidebar works with any navigation stack the application already has. Celeste supplies no router.
+- **Collapsed (rail) state**: icons only, at a fixed narrow width, with the label surfacing as a tooltip. Expanded ↔ collapsed is a bindable state, not just a click on a toggle button.
+- Keyboard navigation across items, `Home`/`End`, and a visible focus ring that survives the collapsed state.
+- Automation peers so a screen reader announces the sidebar as a navigation list rather than a stack of buttons.
+
+### 🔜 Off-canvas `Sidebar`
+
+The same control, presented as an overlay that slides in over the content instead of taking layout space.
+
+- Overlay presentation with a scrim behind it; clicking the scrim or pressing `Esc` dismisses.
+- Focus is trapped while open and returned to the invoking element on close — an overlay that leaves `Tab` walking through the content underneath is worse than no overlay.
+- Slide and scrim fade use `Celeste.Duration.Fast`, and both collapse to an instant transition when the user has disabled animations in Windows.
+- **Responsive switching**: a `Sidebar` host that picks docked, rail, or off-canvas presentation from the available width, with the breakpoints exposed as tokens instead of hard-coded. An application that wants to drive the mode itself can bind the mode directly and ignore the breakpoints.
+
+### 🧭 `NavigationHost`
+
+A content host that pairs with `Sidebar`: holds the current page, keeps a back stack, and preserves scroll position per page. Deliberately after `Sidebar`, because a navigation control that assumes its own host is a control that cannot be dropped into an existing application.
+
+### 🧭 Breadcrumbs and `TabStrip`
+
+Secondary navigation for applications that are wider than they are deep.
 
 ---
 
