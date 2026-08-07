@@ -1,0 +1,362 @@
+<!--
+    Celeste — sidebar navigation.
+
+    Sidebar, SidebarItem, SidebarGroupHeader, and SidebarSeparator share one file because the item
+    templates react to the sidebar's collapsed state through a DataTrigger on the ancestor, and
+    because a StaticResource in one dictionary cannot see a key in a sibling dictionary.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Celeste.Wpf.Controls">
+
+    <!--  ===================  Collapse toggle  ===================  -->
+    <Style x:Key="Celeste.Sidebar.ToggleButton" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.MutedForeground}" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Width" Value="28" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="Transparent"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource Celeste.Radius.Sm}">
+                        <!--  A chevron, not an icon set: one Path is cheaper than a font dependency.  -->
+                        <Path x:Name="Chevron"
+                              Width="7"
+                              Height="12"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Data="M 6,0 L 0,6 L 6,12"
+                              RenderTransformOrigin="0.5,0.5"
+                              Stretch="None"
+                              Stroke="{TemplateBinding Foreground}"
+                              StrokeEndLineCap="Round"
+                              StrokeStartLineCap="Round"
+                              StrokeThickness="1.6">
+                            <Path.RenderTransform>
+                                <RotateTransform Angle="0" />
+                            </Path.RenderTransform>
+                        </Path>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Foreground}" />
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource Celeste.Brush.Secondary}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource Celeste.Brush.SecondaryPressed}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource Celeste.Brush.Ring}" />
+                        </Trigger>
+                        <!--  Collapsed: the chevron points the way out of the rail.  -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <!--  A Setter cannot target a Freezable by name, so the transform is replaced whole.  -->
+                            <Setter TargetName="Chevron" Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="180" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        Celeste ships no icon set. This only makes a consumer's Path follow the item's foreground,
+        which is what carries the hover, selected, and disabled states — a Shape does not inherit
+        Stroke the way text inherits Foreground, so without it icons stay one colour.
+    -->
+    <Style x:Key="Celeste.SidebarItem.Icon" TargetType="{x:Type Path}">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Stretch" Value="None" />
+        <Setter Property="Stroke" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type controls:SidebarItem}}}" />
+        <Setter Property="StrokeEndLineCap" Value="Round" />
+        <Setter Property="StrokeLineJoin" Value="Round" />
+        <Setter Property="StrokeStartLineCap" Value="Round" />
+        <Setter Property="StrokeThickness" Value="1.4" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!--  ===================  SidebarItem  ===================  -->
+    <Style x:Key="Celeste.SidebarItem" TargetType="{x:Type controls:SidebarItem}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.MutedForeground}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="MinHeight" Value="{DynamicResource Celeste.Sidebar.ItemHeight}" />
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:SidebarItem}">
+                    <!--
+                        The tooltip is always bound and only enabled in the rail, where the label
+                        is hidden and nothing else names the destination. Enabling it through
+                        ToolTipService keeps one binding instead of a Setter that carries one.
+                    -->
+                    <Grid x:Name="Root"
+                          Margin="0,1"
+                          Background="Transparent"
+                          ToolTip="{TemplateBinding Content}"
+                          ToolTipService.InitialShowDelay="400"
+                          ToolTipService.IsEnabled="False"
+                          ToolTipService.Placement="Right">
+                        <Border x:Name="Fill"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="{DynamicResource Celeste.Radius.Md}" />
+
+                        <Border x:Name="Indicator"
+                                Width="3"
+                                Height="16"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Background="{DynamicResource Celeste.Brush.Primary}"
+                                CornerRadius="0,2,2,0"
+                                Opacity="0" />
+
+                        <Border x:Name="FocusRing"
+                                BorderBrush="{DynamicResource Celeste.Brush.Ring}"
+                                BorderThickness="2"
+                                CornerRadius="{DynamicResource Celeste.Radius.Md}"
+                                Opacity="0" />
+
+                        <Grid x:Name="ContentGrid" Margin="{TemplateBinding Padding}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <ContentPresenter x:Name="IconArea"
+                                              Width="{DynamicResource Celeste.Sidebar.IconSize}"
+                                              Height="{DynamicResource Celeste.Sidebar.IconSize}"
+                                              VerticalAlignment="Center"
+                                              Content="{TemplateBinding Icon}"
+                                              TextElement.Foreground="{TemplateBinding Foreground}" />
+
+                            <ContentPresenter x:Name="Label"
+                                              Grid.Column="1"
+                                              Margin="10,0,0,0"
+                                              HorizontalAlignment="Left"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+
+                            <controls:Badge x:Name="BadgeArea"
+                                            Grid.Column="2"
+                                            Margin="8,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Content="{TemplateBinding Badge}" />
+                        </Grid>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Icon" Value="{x:Null}">
+                            <Setter TargetName="IconArea" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="Label" Property="Margin" Value="0" />
+                        </Trigger>
+
+                        <Trigger Property="Badge" Value="{x:Null}">
+                            <Setter TargetName="BadgeArea" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Foreground}" />
+                            <Setter TargetName="Fill" Property="Background" Value="{DynamicResource Celeste.Brush.Secondary}" />
+                        </Trigger>
+
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="FontWeight" Value="{DynamicResource Celeste.FontWeight.Medium}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.AccentForeground}" />
+                            <Setter TargetName="Fill" Property="Background" Value="{DynamicResource Celeste.Brush.Accent}" />
+                            <Setter TargetName="Indicator" Property="Opacity" Value="1" />
+                        </Trigger>
+
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="FocusRing" Property="Opacity" Value="1" />
+                        </Trigger>
+
+                        <!--
+                            The rail. Bound to the ancestor rather than an inherited attached
+                            property so that a SidebarItem used outside a Sidebar still renders.
+                        -->
+                        <DataTrigger Binding="{Binding IsCollapsed, RelativeSource={RelativeSource AncestorType={x:Type controls:Sidebar}}}" Value="True">
+                            <Setter TargetName="Label" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="BadgeArea" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="ContentGrid" Property="HorizontalAlignment" Value="Center" />
+                            <Setter TargetName="ContentGrid" Property="Margin" Value="0" />
+                            <Setter TargetName="Root" Property="ToolTipService.IsEnabled" Value="True" />
+                        </DataTrigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource Celeste.SidebarItem}" TargetType="{x:Type controls:SidebarItem}" />
+
+    <!--  ===================  SidebarGroupHeader  ===================  -->
+    <Style x:Key="Celeste.SidebarGroupHeader" TargetType="{x:Type controls:SidebarGroupHeader}">
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Caption}" />
+        <Setter Property="FontWeight" Value="{DynamicResource Celeste.FontWeight.SemiBold}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.MutedForeground}" />
+        <Setter Property="Padding" Value="10,14,10,4" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:SidebarGroupHeader}">
+                    <Grid>
+                        <ContentPresenter x:Name="Caption"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center" />
+                        <!--  In the rail the caption cannot fit, so the grouping survives as a rule.  -->
+                        <Border x:Name="Rule"
+                                Height="1"
+                                Margin="8,10"
+                                VerticalAlignment="Center"
+                                Background="{DynamicResource Celeste.Brush.Border}"
+                                Visibility="Collapsed" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsCollapsed, RelativeSource={RelativeSource AncestorType={x:Type controls:Sidebar}}}" Value="True">
+                            <Setter TargetName="Caption" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="Rule" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource Celeste.SidebarGroupHeader}" TargetType="{x:Type controls:SidebarGroupHeader}" />
+
+    <!--  ===================  SidebarSeparator  ===================  -->
+    <Style x:Key="Celeste.SidebarSeparator" TargetType="{x:Type controls:SidebarSeparator}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:SidebarSeparator}">
+                    <Border Height="1"
+                            Margin="8,8"
+                            Background="{DynamicResource Celeste.Brush.Border}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource Celeste.SidebarSeparator}" TargetType="{x:Type controls:SidebarSeparator}" />
+
+    <!--  ===================  Sidebar  ===================  -->
+    <Style x:Key="Celeste.Sidebar" TargetType="{x:Type controls:Sidebar}">
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.SurfaceSunken}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.Border}" />
+        <Setter Property="BorderThickness" Value="0,0,1,0" />
+        <Setter Property="CollapsedWidth" Value="{DynamicResource Celeste.Sidebar.CollapsedWidth}" />
+        <Setter Property="ExpandedWidth" Value="{DynamicResource Celeste.Sidebar.ExpandedWidth}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Celeste.FontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Body}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Foreground}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="8,4" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:Sidebar}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Grid x:Name="HeaderArea" Margin="14,12,10,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <ContentPresenter x:Name="HeaderContent"
+                                                  VerticalAlignment="Center"
+                                                  Content="{TemplateBinding Header}"
+                                                  TextElement.FontSize="{DynamicResource Celeste.FontSize.BodyLarge}"
+                                                  TextElement.FontWeight="SemiBold" />
+
+                                <ToggleButton x:Name="Toggle"
+                                              Grid.Column="1"
+                                              IsChecked="{Binding IsCollapsed, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                              Style="{StaticResource Celeste.Sidebar.ToggleButton}" />
+                            </Grid>
+
+                            <ScrollViewer Grid.Row="1"
+                                          Padding="{TemplateBinding Padding}"
+                                          Focusable="False">
+                                <ItemsPresenter />
+                            </ScrollViewer>
+
+                            <Border x:Name="FooterArea"
+                                    Grid.Row="2"
+                                    Padding="8"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="0,1,0,0">
+                                <ContentPresenter Content="{TemplateBinding Footer}" />
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Header" Value="{x:Null}">
+                            <Setter TargetName="HeaderContent" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="Footer" Value="{x:Null}">
+                            <Setter TargetName="FooterArea" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="IsToggleButtonVisible" Value="False">
+                            <Setter TargetName="Toggle" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <!--  Nothing left in the header row: give the space back to the items.  -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Header" Value="{x:Null}" />
+                                <Condition Property="IsToggleButtonVisible" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="HeaderArea" Property="Visibility" Value="Collapsed" />
+                        </MultiTrigger>
+
+                        <!--  The rail is too narrow for a header label; the toggle centres in it.  -->
+                        <Trigger Property="IsCollapsed" Value="True">
+                            <Setter TargetName="HeaderArea" Property="Margin" Value="0,12,0,8" />
+                            <Setter TargetName="HeaderContent" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="Toggle" Property="Grid.Column" Value="0" />
+                            <Setter TargetName="Toggle" Property="Grid.ColumnSpan" Value="2" />
+                            <Setter TargetName="Toggle" Property="HorizontalAlignment" Value="Center" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource Celeste.Sidebar}" TargetType="{x:Type controls:Sidebar}" />
+
+</ResourceDictionary>

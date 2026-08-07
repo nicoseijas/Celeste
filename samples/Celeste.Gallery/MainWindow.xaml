@@ -303,6 +303,100 @@
                 </ScrollViewer>
             </TabItem>
 
+            <!--  ===========  Navigation  ===========  -->
+            <TabItem Header="Navigation">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <celeste:Card Header="Sidebar"
+                                      Description="Selection is the only navigation state the control owns — bind SelectedItem and route it yourself.">
+                            <StackPanel>
+                                <StackPanel Margin="0,0,0,14" Orientation="Horizontal">
+                                    <celeste:ToggleSwitch x:Name="CollapseToggle" Content="Collapse to the rail" />
+                                    <TextBlock Margin="20,0,0,0"
+                                               VerticalAlignment="Center"
+                                               Style="{StaticResource Celeste.TextBlock.Muted}"
+                                               Text="The header chevron does the same thing — IsCollapsed binds two ways." />
+                                </StackPanel>
+
+                                <Border Height="430"
+                                        BorderBrush="{DynamicResource Celeste.Brush.Border}"
+                                        BorderThickness="1"
+                                        ClipToBounds="True"
+                                        CornerRadius="{DynamicResource Celeste.Radius.Md}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <celeste:Sidebar x:Name="DemoSidebar"
+                                                         BorderThickness="0,0,1,0"
+                                                         Header="Acme"
+                                                         IsCollapsed="{Binding IsChecked, ElementName=CollapseToggle}"
+                                                         SelectedIndex="1">
+                                            <celeste:SidebarGroupHeader Content="WORKSPACE" />
+
+                                            <celeste:SidebarItem Content="Overview">
+                                                <celeste:SidebarItem.Icon>
+                                                    <Path Data="M1,1 H7 V7 H1 Z M11,1 H17 V7 H11 Z M1,11 H7 V17 H1 Z M11,11 H17 V17 H11 Z" Style="{StaticResource Celeste.SidebarItem.Icon}" />
+                                                </celeste:SidebarItem.Icon>
+                                            </celeste:SidebarItem>
+
+                                            <celeste:SidebarItem Badge="12" Content="Reports">
+                                                <celeste:SidebarItem.Icon>
+                                                    <Path Data="M2,16 V9 M7,16 V3 M12,16 V11 M17,16 V6" Style="{StaticResource Celeste.SidebarItem.Icon}" />
+                                                </celeste:SidebarItem.Icon>
+                                            </celeste:SidebarItem>
+
+                                            <celeste:SidebarItem Content="Members">
+                                                <celeste:SidebarItem.Icon>
+                                                    <Path Data="M5.5,6 A3.5,3.5 0 1,0 12.5,6 A3.5,3.5 0 1,0 5.5,6 Z M2.5,16.5 A6.5,5 0 0,1 15.5,16.5" Style="{StaticResource Celeste.SidebarItem.Icon}" />
+                                                </celeste:SidebarItem.Icon>
+                                            </celeste:SidebarItem>
+
+                                            <celeste:SidebarGroupHeader Content="ACCOUNT" />
+
+                                            <celeste:SidebarItem Content="Billing">
+                                                <celeste:SidebarItem.Icon>
+                                                    <Path Data="M1.5,4.5 H16.5 V13.5 H1.5 Z M1.5,7.5 H16.5" Style="{StaticResource Celeste.SidebarItem.Icon}" />
+                                                </celeste:SidebarItem.Icon>
+                                            </celeste:SidebarItem>
+
+                                            <!--  A separator where a group needs parting but not naming.  -->
+                                            <celeste:SidebarSeparator />
+
+                                            <celeste:SidebarItem Content="Archived" IsEnabled="False">
+                                                <celeste:SidebarItem.Icon>
+                                                    <Path Data="M1.5,3.5 H16.5 V7 H1.5 Z M3,7 V15.5 H15 V7 M7,10.5 H11" Style="{StaticResource Celeste.SidebarItem.Icon}" />
+                                                </celeste:SidebarItem.Icon>
+                                            </celeste:SidebarItem>
+
+                                            <celeste:Sidebar.Footer>
+                                                <celeste:SidebarItem Content="Settings">
+                                                    <celeste:SidebarItem.Icon>
+                                                        <Path Data="M5.5,9 A3.5,3.5 0 1,0 12.5,9 A3.5,3.5 0 1,0 5.5,9 Z M9,1.5 V4 M9,14 V16.5 M1.5,9 H4 M14,9 H16.5" Style="{StaticResource Celeste.SidebarItem.Icon}" />
+                                                    </celeste:SidebarItem.Icon>
+                                                </celeste:SidebarItem>
+                                            </celeste:Sidebar.Footer>
+                                        </celeste:Sidebar>
+
+                                        <StackPanel Grid.Column="1"
+                                                    Margin="24"
+                                                    VerticalAlignment="Top">
+                                            <TextBlock Style="{StaticResource Celeste.TextBlock.Subtitle}" Text="{Binding SelectedItem.Content, ElementName=DemoSidebar}" />
+                                            <TextBlock Margin="0,6,0,0"
+                                                       Style="{StaticResource Celeste.TextBlock.Muted}"
+                                                       Text="Arrow keys move between destinations and step over group headers and separators. In the rail, the label becomes the tooltip."
+                                                       TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </celeste:Card>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
         </TabControl>
     </Grid>
 </Window>

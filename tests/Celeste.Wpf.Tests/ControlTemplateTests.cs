@@ -37,6 +37,10 @@ public class ControlTemplateTests
         nameof(Badge),
         nameof(ToggleSwitch),
         nameof(ProgressRing),
+        nameof(Sidebar),
+        nameof(SidebarItem),
+        nameof(SidebarGroupHeader),
+        nameof(SidebarSeparator),
     };
 
     [Theory]
@@ -153,6 +157,15 @@ public class ControlTemplateTests
         nameof(Badge) => new Badge { Content = "New" },
         nameof(ToggleSwitch) => new ToggleSwitch { Content = "Label" },
         nameof(ProgressRing) => new ProgressRing(),
+        nameof(Sidebar) => new Sidebar
+        {
+            Header = "Acme",
+            Footer = "Settings",
+            Items = { new SidebarItem { Content = "Overview" } },
+        },
+        nameof(SidebarItem) => new SidebarItem { Content = "Overview", Badge = "3" },
+        nameof(SidebarGroupHeader) => new SidebarGroupHeader { Content = "Workspace" },
+        nameof(SidebarSeparator) => new SidebarSeparator(),
         _ => throw new ArgumentOutOfRangeException(nameof(controlName), controlName, "Unknown control."),
     };
 

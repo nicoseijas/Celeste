@@ -15,7 +15,7 @@ namespace Celeste.Wpf.Tests;
 /// </summary>
 public class GalleryTests
 {
-    public static TheoryData<int> TabIndexes => new() { 0, 1, 2, 3 };
+    public static TheoryData<int> TabIndexes => new() { 0, 1, 2, 3, 4 };
 
     [Theory]
     [MemberData(nameof(TabIndexes))]
@@ -26,7 +26,7 @@ public class GalleryTests
     public void EveryGalleryTabRealizesInDark(int tabIndex) => AssertTabRealizes(tabIndex, ApplicationTheme.Dark);
 
     /// <summary>
-    /// The range switch is a segmented choice: exactly one of Day / Week / Month is the current
+    /// The range switch is a segmented choice: exactly one of Day / Week / Month is the selected
     /// range at any time. Three independent <see cref="ToggleButton"/> instances look segmented but
     /// are not — each one checks and unchecks on its own, so the sample could show two ranges at
     /// once, or none.
