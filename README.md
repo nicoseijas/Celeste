@@ -6,7 +6,7 @@ Celeste is a UI library for WPF applications that need to look current without a
 
 - **Light and dark themes** built from the same token names, switchable while the app runs. `ThemeManager.Apply(ApplicationTheme.System)` follows the Windows app theme and keeps following it.
 - **Restyled built-in controls**: `Button`, `TextBox`, `PasswordBox`, `CheckBox`, `RadioButton`, `ComboBox`, `ListBox`, `TabControl`, `Slider`, `ProgressBar`, `ScrollBar`, `ToolTip`, `Label`, `Separator`.
-- **Controls WPF does not have**: `Card`, `Badge`, `ToggleSwitch`, `ProgressRing`, and a `Sidebar` that collapses to an icon rail.
+- **Controls WPF does not have**: `Card`, `Badge`, `ToggleSwitch`, `ProgressRing`, and a `Sidebar` that collapses to an icon rail or slides in over the content.
 - **Button variants** — primary, secondary, destructive, outline, ghost, link — that all share one `ControlTemplate`. Defining a new variant means setting three brushes, not copying a template.
 - **A type scale** and layout tokens (spacing, radii, control heights) exposed as XAML resources, so your own controls can sit on the same grid as the library's.
 
@@ -97,6 +97,31 @@ Give every item an `Icon` if the sidebar can collapse: the rail hides labels and
 
 Arrow keys move between items and step over `SidebarGroupHeader` and `SidebarSeparator`. The sidebar sets its own `Width` from `ExpandedWidth` and `CollapsedWidth`, so put it in an `Auto` grid column rather than sizing it yourself.
 
+### Off-canvas and responsive
+
+`SidebarHost` decides how the pane is presented instead of leaving it to your layout. `Auto` reads the host's own width: wide is docked, narrower is the rail, narrow takes the pane out of the layout and slides it in over the content on demand.
+
+```xml
+<celeste:SidebarHost x:Name="Shell">
+    <celeste:SidebarHost.Pane>
+        <celeste:Sidebar Header="Acme" SelectedItem="{Binding CurrentPage}">
+            <celeste:SidebarItem Content="Overview" />
+        </celeste:Sidebar>
+    </celeste:SidebarHost.Pane>
+
+    <DockPanel>
+        <Button DockPanel.Dock="Top"
+                Command="{x:Static celeste:SidebarHost.TogglePaneCommand}"
+                Content="Menu" />
+        <ContentControl Content="{Binding CurrentPage}" />
+    </DockPanel>
+</celeste:SidebarHost>
+```
+
+Celeste never opens the pane on its own — it cannot know where your menu button belongs. Bind one to `TogglePaneCommand`, which routes, so the button has to sit inside the host. The command only executes while the pane is off-canvas, so the button disables itself once the pane is docked; bind `Visibility` to `ActualDisplayMode` if you would rather it disappear.
+
+While the overlay is open, a scrim covers the content, `Tab` stays inside the pane, and `Esc` or a click on the scrim closes it and returns focus. Set `DisplayMode` to `Docked`, `Rail`, or `OffCanvas` to drive the presentation yourself; the breakpoints are then ignored. `ActualDisplayMode` always reports what you are actually looking at.
+
 ## Theming it
 
 Colors are semantic, not literal. `Celeste.Brush.Primary` is "the brand action color", and the light and dark dictionaries define it differently. To recolor the library, override the tokens after merging Celeste:
@@ -126,7 +151,7 @@ For per-control tweaks without retemplating, `Celeste.Wpf.Controls.ControlHelper
 
 Alpha. The token names and the public control API are still open to change; treat `0.x` releases as breaking. What exists is covered by tests that apply every control's template in both themes on a real WPF dispatcher, so the styles load and measure — but they have not been through a wide range of real applications yet.
 
-Not covered yet: `Menu` / `ContextMenu`, `DataGrid`, `TreeView`, `Expander`, `Calendar` / `DatePicker`, and dialogs. Those controls keep their default WPF appearance in a Celeste application, which is visible and jarring. Contributions in that direction are the most useful ones right now. Navigation has a `Sidebar`, but no off-canvas presentation and no navigation host yet.
+Not covered yet: `Menu` / `ContextMenu`, `DataGrid`, `TreeView`, `Expander`, `Calendar` / `DatePicker`, and dialogs. Those controls keep their default WPF appearance in a Celeste application, which is visible and jarring. Contributions in that direction are the most useful ones right now. Navigation has a `Sidebar` and a `SidebarHost` that presents it docked, as a rail, or off-canvas, but no navigation host that owns pages and a back stack yet.
 
 [ROADMAP.md](ROADMAP.md) has the order those gaps are being closed in, plus what is deliberately out of scope.
 

@@ -57,16 +57,19 @@ A vertical navigation control — the thing every one of these applications buil
 
 Still open, and deliberately not blocking the milestone: an icon-less item is an empty row in the rail, so a collapsible sidebar has to supply icons. The width is animated but nothing else is.
 
-### 🔜 Off-canvas `Sidebar`
+### ✅ Off-canvas `Sidebar`
 
-The same control, presented as an overlay that slides in over the content instead of taking layout space. Now the next thing to build, on top of the shipped `Sidebar` rather than beside it.
+`SidebarHost` pairs a pane with the content beside it and owns the presentation: docked, rail, or off-canvas as an overlay that slides in over the content instead of taking layout space.
 
 - Overlay presentation with a scrim behind it; clicking the scrim or pressing `Esc` dismisses.
 - Focus is trapped while open and returned to the invoking element on close — an overlay that leaves `Tab` walking through the content underneath is worse than no overlay.
 - Slide and scrim fade use `Celeste.Duration.Fast`, and both collapse to an instant transition when the user has disabled animations in Windows.
-- **Responsive switching**: a `Sidebar` host that picks docked, rail, or off-canvas presentation from the available width, with the breakpoints exposed as tokens instead of hard-coded. An application that wants to drive the mode itself can bind the mode directly and ignore the breakpoints.
+- **Responsive switching**: `DisplayMode="Auto"` picks the presentation from the host's own width, with `RailBreakpoint` and `OffCanvasBreakpoint` defaulted from tokens. Setting an explicit mode stops the breakpoints being consulted, so an application that drives the mode itself is not fighting them. `ActualDisplayMode` is the resolved value, bindable.
+- `TogglePaneCommand` is the way in: Celeste never opens the pane itself, because it cannot know where the application's menu button lives.
 
-### 🧭 `NavigationHost`
+Still open: the host has no automation peer of its own, and an open overlay is not announced as modal. Focus is trapped and returned, which is the behavioral half of that.
+
+### 🔜 `NavigationHost`
 
 A content host that pairs with `Sidebar`: holds the current page, keeps a back stack, and preserves scroll position per page. Deliberately after `Sidebar`, because a navigation control that assumes its own host is a control that cannot be dropped into an existing application.
 
