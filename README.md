@@ -101,6 +101,8 @@ Alpha. The token names and the public control API are still open to change; trea
 
 Not covered yet: `Menu` / `ContextMenu`, `DataGrid`, `TreeView`, `Expander`, `Calendar` / `DatePicker`, dialogs, and navigation. Those controls keep their default WPF appearance in a Celeste application, which is visible and jarring. Contributions in that direction are the most useful ones right now.
 
+[ROADMAP.md](ROADMAP.md) has the order those gaps are being closed in, plus what is deliberately out of scope.
+
 ## Repository layout
 
 | Path | Contents |
