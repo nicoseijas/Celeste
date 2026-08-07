@@ -95,6 +95,36 @@ Named in the README as the most jarring gap. Each is a restyle of a built-in con
 
 ---
 
+## Cross-cutting, ongoing
+
+These are not milestones. They apply to everything above.
+
+### Accessibility
+
+- Automation peers and names on every custom control.
+- Respect the Windows "show animations" and "reduce transparency" settings. A motion token set that resolves to zero duration is the mechanism.
+- High-contrast theme support. Today a high-contrast user gets Celeste's colors, which is the wrong answer; the fix is a third theme dictionary selected from the system setting, not per-control triggers.
+- Contrast audit of both theme dictionaries against WCAG AA, enforced by a test over the token pairs the styles actually use together.
+
+### Theming
+
+- 💭 A documented token contract, so "override these N brushes and everything follows" is a promise instead of an observation.
+- 💭 Brand palette generation: derive the full ramp from one accent color rather than requiring every hover and pressed variant by hand.
+- 🧭 Density: a compact token set that swaps control heights and paddings without touching styles.
+
+### Testing and tooling
+
+- 🧭 Extend `ControlTemplateTests` coverage as controls land; every new style needs its row.
+- 🧭 Visual regression snapshots of the gallery in both themes. Template-application tests prove a style loads, not that it looks right.
+- 🧭 CI on Windows for `net8.0-windows` and `net10.0-windows`, with the package built and validated on every push.
+
+### Documentation
+
+- 🧭 A published token reference generated from `Light.xaml`, so the README stops pointing at a source file.
+- 🧭 A per-control page with the states each style covers.
+
+---
+
 ## Explicitly out of scope
 
 Saying no here is cheaper than saying it in an issue later.
