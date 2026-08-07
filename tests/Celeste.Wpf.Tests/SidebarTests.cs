@@ -1,5 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using Celeste.Wpf.Controls;
 using Celeste.Wpf.Theming;
 using Xunit;
@@ -99,6 +101,47 @@ public class SidebarTests
             FrameworkElement root = ItemRootOf(item);
             Assert.True(ToolTipService.GetIsEnabled(root));
             Assert.Equal("Overview", root.ToolTip);
+        });
+    }
+
+    /// <summary>
+    /// An icon has to be painted, and has to keep following the item once hover or selection
+    /// changes the foreground, or it vanishes against the accent fill.
+    /// </summary>
+    /// <remarks>
+    /// This guards the contract, not the defect that produced it. Icons once went unpainted in a
+    /// real application because the style resolved the colour by walking up to the owning item: an
+    /// icon is the value of <see cref="SidebarItem.Icon"/>, so it is styled while still detached,
+    /// the ancestor walk finds nothing, and the binding never recovers. This host resolves that
+    /// same binding, whichever construction order the test uses, so the failure was confirmed and
+    /// the fix verified against the running gallery instead.
+    /// </remarks>
+    [Fact]
+    public void AnItemIconIsPaintedAndFollowsTheItemsForeground()
+    {
+        StaTestHost.Run(() =>
+        {
+            var icon = new Path
+            {
+                Data = Geometry.Parse("M1,1 H17 V17 H1 Z"),
+                Style = (Style)Application.Current.FindResource("Celeste.SidebarItem.Icon"),
+            };
+
+            // Styled before it has any parent, the order XAML uses.
+            Assert.Null(icon.Parent);
+
+            var item = new SidebarItem { Content = "Overview", Icon = icon };
+            var sidebar = new Sidebar { Items = { item } };
+
+            Realize(sidebar);
+            Assert.NotNull(icon.Stroke);
+            Brush idle = icon.Stroke;
+
+            item.IsSelected = true;
+            Realize(sidebar);
+
+            Assert.NotEqual(idle, icon.Stroke);
+            Assert.Equal(((SolidColorBrush)item.Foreground).Color, ((SolidColorBrush)icon.Stroke).Color);
         });
     }
 

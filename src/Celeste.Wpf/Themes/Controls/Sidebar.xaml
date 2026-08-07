@@ -78,7 +78,15 @@
     <Style x:Key="Celeste.SidebarItem.Icon" TargetType="{x:Type Path}">
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="Stretch" Value="None" />
-        <Setter Property="Stroke" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type controls:SidebarItem}}}" />
+        <!--
+            The colour arrives by inheritance, not by an ancestor walk. An icon is the value of
+            SidebarItem.Icon, so it is built with no parent at all and only later inserted into the
+            item's template: a FindAncestor binding activates while the element is still detached,
+            finds nothing, and leaves Stroke null for good. TextElement.Foreground inherits, and
+            inheritance re-evaluates when the element is given a parent — the item's template pushes
+            it onto the icon area, and every hover, selected and disabled trigger follows from there.
+        -->
+        <Setter Property="Stroke" Value="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource Self}}" />
         <Setter Property="StrokeEndLineCap" Value="Round" />
         <Setter Property="StrokeLineJoin" Value="Round" />
         <Setter Property="StrokeStartLineCap" Value="Round" />
