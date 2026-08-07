@@ -38,6 +38,7 @@ public class ControlTemplateTests
         nameof(ToggleSwitch),
         nameof(ProgressRing),
         nameof(Sidebar),
+        nameof(SidebarHost),
         nameof(SidebarItem),
         nameof(SidebarGroupHeader),
         nameof(SidebarSeparator),
@@ -162,6 +163,11 @@ public class ControlTemplateTests
             Header = "Acme",
             Footer = "Settings",
             Items = { new SidebarItem { Content = "Overview" } },
+        },
+        nameof(SidebarHost) => new SidebarHost
+        {
+            Pane = new Sidebar { Items = { new SidebarItem { Content = "Overview" } } },
+            Content = "body",
         },
         nameof(SidebarItem) => new SidebarItem { Content = "Overview", Badge = "3" },
         nameof(SidebarGroupHeader) => new SidebarGroupHeader { Content = "Workspace" },

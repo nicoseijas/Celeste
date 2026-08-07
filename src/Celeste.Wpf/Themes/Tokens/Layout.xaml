@@ -40,6 +40,10 @@
     <sys:Double x:Key="Celeste.Sidebar.ItemHeight">36</sys:Double>
     <sys:Double x:Key="Celeste.Sidebar.IconSize">18</sys:Double>
 
+    <!--  Widths at which a SidebarHost in Auto mode changes how it presents the pane.  -->
+    <sys:Double x:Key="Celeste.Sidebar.RailBreakpoint">1008</sys:Double>
+    <sys:Double x:Key="Celeste.Sidebar.OffCanvasBreakpoint">640</sys:Double>
+
     <!--  Focus ring  -->
     <sys:Double x:Key="Celeste.Focus.RingThickness">2</sys:Double>
     <sys:Double x:Key="Celeste.Focus.RingOffset">2</sys:Double>

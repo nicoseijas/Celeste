@@ -393,6 +393,116 @@
                                 </Border>
                             </StackPanel>
                         </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0"
+                                      Header="Off-canvas and responsive"
+                                      Description="SidebarHost reads its own width and picks docked, rail, or off-canvas. Drag the handle across the breakpoints.">
+                            <StackPanel>
+                                <StackPanel Margin="0,0,0,14" Orientation="Horizontal">
+                                    <TextBlock VerticalAlignment="Center"
+                                               Style="{StaticResource Celeste.TextBlock.Muted}"
+                                               Text="Available width" />
+                                    <Slider x:Name="HostWidth"
+                                            Width="260"
+                                            Margin="12,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Maximum="940"
+                                            Minimum="360"
+                                            Value="900" />
+                                    <TextBlock Margin="16,0,0,0"
+                                               VerticalAlignment="Center"
+                                               FontWeight="SemiBold"
+                                               Text="{Binding ActualDisplayMode, ElementName=DemoHost}" />
+                                </StackPanel>
+
+                                <Border Width="{Binding Value, ElementName=HostWidth}"
+                                        Height="380"
+                                        HorizontalAlignment="Left"
+                                        BorderBrush="{DynamicResource Celeste.Brush.Border}"
+                                        BorderThickness="1"
+                                        ClipToBounds="True"
+                                        CornerRadius="{DynamicResource Celeste.Radius.Md}">
+                                    <!--  Breakpoints scaled down to the demo box; the defaults assume a whole window.  -->
+                                    <celeste:SidebarHost x:Name="DemoHost" OffCanvasBreakpoint="520" RailBreakpoint="760">
+                                        <celeste:SidebarHost.Pane>
+                                            <celeste:Sidebar x:Name="DemoHostSidebar"
+                                                             BorderThickness="0,0,1,0"
+                                                             Header="Acme"
+                                                             IsToggleButtonVisible="False"
+                                                             SelectedIndex="0">
+                                                <celeste:SidebarItem Content="Overview">
+                                                    <celeste:SidebarItem.Icon>
+                                                        <Path Data="M1,1 H7 V7 H1 Z M11,1 H17 V7 H11 Z M1,11 H7 V17 H1 Z M11,11 H17 V17 H11 Z" Style="{StaticResource Celeste.SidebarItem.Icon}" />
+                                                    </celeste:SidebarItem.Icon>
+                                                </celeste:SidebarItem>
+
+                                                <celeste:SidebarItem Badge="12" Content="Reports">
+                                                    <celeste:SidebarItem.Icon>
+                                                        <Path Data="M2,16 V9 M7,16 V3 M12,16 V11 M17,16 V6" Style="{StaticResource Celeste.SidebarItem.Icon}" />
+                                                    </celeste:SidebarItem.Icon>
+                                                </celeste:SidebarItem>
+
+                                                <celeste:SidebarItem Content="Members">
+                                                    <celeste:SidebarItem.Icon>
+                                                        <Path Data="M5.5,6 A3.5,3.5 0 1,0 12.5,6 A3.5,3.5 0 1,0 5.5,6 Z M2.5,16.5 A6.5,5 0 0,1 15.5,16.5" Style="{StaticResource Celeste.SidebarItem.Icon}" />
+                                                    </celeste:SidebarItem.Icon>
+                                                </celeste:SidebarItem>
+
+                                                <celeste:SidebarItem Content="Billing">
+                                                    <celeste:SidebarItem.Icon>
+                                                        <Path Data="M1.5,4.5 H16.5 V13.5 H1.5 Z M1.5,7.5 H16.5" Style="{StaticResource Celeste.SidebarItem.Icon}" />
+                                                    </celeste:SidebarItem.Icon>
+                                                </celeste:SidebarItem>
+                                            </celeste:Sidebar>
+                                        </celeste:SidebarHost.Pane>
+
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+
+                                            <Border Padding="10,8"
+                                                    BorderBrush="{DynamicResource Celeste.Brush.Border}"
+                                                    BorderThickness="0,0,0,1">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <!--  Celeste never opens the pane itself: the application decides where this button lives.  -->
+                                                    <Button Command="{x:Static celeste:SidebarHost.TogglePaneCommand}" ToolTip="Show navigation">
+                                                        <Button.Style>
+                                                            <Style BasedOn="{StaticResource Celeste.Button.Ghost}" TargetType="{x:Type Button}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding ActualDisplayMode, ElementName=DemoHost}" Value="OffCanvas">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                        <Path Width="16"
+                                                              Height="12"
+                                                              Data="M0,1 H16 M0,6 H16 M0,11 H16"
+                                                              Stroke="{DynamicResource Celeste.Brush.Foreground}"
+                                                              StrokeThickness="1.6" />
+                                                    </Button>
+
+                                                    <TextBlock Margin="10,0,0,0"
+                                                               VerticalAlignment="Center"
+                                                               FontWeight="SemiBold"
+                                                               Text="{Binding SelectedItem.Content, ElementName=DemoHostSidebar}" />
+                                                </StackPanel>
+                                            </Border>
+
+                                            <TextBlock Grid.Row="1"
+                                                       Margin="24"
+                                                       VerticalAlignment="Top"
+                                                       Style="{StaticResource Celeste.TextBlock.Muted}"
+                                                       Text="Narrow enough and the pane leaves the layout. Opening it draws a scrim over this text, traps Tab inside the pane, and gives focus back when the scrim or Esc closes it."
+                                                       TextWrapping="Wrap" />
+                                        </Grid>
+                                    </celeste:SidebarHost>
+                                </Border>
+                            </StackPanel>
+                        </celeste:Card>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

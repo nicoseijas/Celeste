@@ -1,0 +1,70 @@
+<!--
+    Celeste — SidebarHost.
+
+    One Grid serves all three presentations. Docked and rail put the pane in a sized column beside
+    the content; off-canvas takes that column to zero and lets the pane span both, so it draws over
+    the content instead of pushing it. The scrim sits between the two in z-order.
+
+    Visibility, the slide transform, and the scrim fade are driven from the control: they depend on
+    the pane's measured width, which a trigger cannot reach.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Celeste.Wpf.Controls">
+
+    <Style x:Key="Celeste.SidebarHost" TargetType="{x:Type controls:SidebarHost}">
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Background}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Celeste.FontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Body}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Foreground}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="OffCanvasBreakpoint" Value="{DynamicResource Celeste.Sidebar.OffCanvasBreakpoint}" />
+        <Setter Property="RailBreakpoint" Value="{DynamicResource Celeste.Sidebar.RailBreakpoint}" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:SidebarHost}">
+                    <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="PaneColumn" Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <ContentPresenter x:Name="PART_Content"
+                                          Grid.Column="1"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Content="{TemplateBinding Content}"
+                                          ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}" />
+
+                        <!--  Collapsed while closed so it cannot swallow clicks meant for the content.  -->
+                        <Border x:Name="PART_Scrim"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Background="{DynamicResource Celeste.Brush.Overlay}"
+                                Opacity="0"
+                                Visibility="Collapsed" />
+
+                        <ContentPresenter x:Name="PART_Pane"
+                                          Grid.Column="0"
+                                          HorizontalAlignment="Left"
+                                          Content="{TemplateBinding Pane}"
+                                          KeyboardNavigation.TabNavigation="Cycle" />
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="ActualDisplayMode" Value="OffCanvas">
+                            <Setter TargetName="PaneColumn" Property="Width" Value="0" />
+                            <Setter TargetName="PART_Pane" Property="Grid.ColumnSpan" Value="2" />
+                            <Setter TargetName="PART_Pane" Property="Effect" Value="{DynamicResource Celeste.Shadow.Lg}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource Celeste.SidebarHost}" TargetType="{x:Type controls:SidebarHost}" />
+
+</ResourceDictionary>
