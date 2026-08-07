@@ -334,6 +334,14 @@
                                                          Header="Acme"
                                                          IsCollapsed="{Binding IsChecked, ElementName=CollapseToggle}"
                                                          SelectedIndex="1">
+                                            <!--  The rail is 56px wide: the name gives way to a mark.  -->
+                                            <celeste:Sidebar.CollapsedHeader>
+                                                <Path Width="20"
+                                                      Height="20"
+                                                      Data="M10,0 L20,10 L10,20 L0,10 Z M10,5.5 L4.5,10 L10,14.5 L15.5,10 Z"
+                                                      Fill="{DynamicResource Celeste.Brush.Primary}" />
+                                            </celeste:Sidebar.CollapsedHeader>
+
                                             <celeste:SidebarGroupHeader Content="WORKSPACE" />
 
                                             <celeste:SidebarItem Content="Overview">
@@ -430,6 +438,13 @@
                                                              Header="Acme"
                                                              IsToggleButtonVisible="False"
                                                              SelectedIndex="0">
+                                                <celeste:Sidebar.CollapsedHeader>
+                                                    <Path Width="20"
+                                                          Height="20"
+                                                          Data="M10,0 L20,10 L10,20 L0,10 Z M10,5.5 L4.5,10 L10,14.5 L15.5,10 Z"
+                                                          Fill="{DynamicResource Celeste.Brush.Primary}" />
+                                                </celeste:Sidebar.CollapsedHeader>
+
                                                 <celeste:SidebarItem Content="Overview">
                                                     <celeste:SidebarItem.Icon>
                                                         <Path Data="M1,1 H7 V7 H1 Z M11,1 H17 V7 H11 Z M1,11 H7 V17 H1 Z M11,11 H17 V17 H11 Z" Style="{StaticResource Celeste.SidebarItem.Icon}" />

@@ -295,17 +295,34 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
+                            <!--
+                                Two rows so the rail can stack a mark above the chevron. Expanded,
+                                the mark's row measures to nothing and the header keeps its single
+                                line.
+                            -->
                             <Grid x:Name="HeaderArea" Margin="14,12,10,8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
 
                                 <ContentPresenter x:Name="HeaderContent"
                                                   VerticalAlignment="Center"
                                                   Content="{TemplateBinding Header}"
                                                   TextElement.FontSize="{DynamicResource Celeste.FontSize.BodyLarge}"
                                                   TextElement.FontWeight="SemiBold" />
+
+                                <ContentPresenter x:Name="CollapsedHeaderContent"
+                                                  Grid.ColumnSpan="2"
+                                                  Margin="0,0,0,6"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  Content="{TemplateBinding CollapsedHeader}"
+                                                  Visibility="Collapsed" />
 
                                 <ToggleButton x:Name="Toggle"
                                               Grid.Column="1"
@@ -351,14 +368,34 @@
                             <Setter TargetName="HeaderArea" Property="Visibility" Value="Collapsed" />
                         </MultiTrigger>
 
-                        <!--  The rail is too narrow for a header label; the toggle centres in it.  -->
+                        <!--  The rail is too narrow for a header label; the mark and toggle centre in it.  -->
                         <Trigger Property="IsCollapsed" Value="True">
                             <Setter TargetName="HeaderArea" Property="Margin" Value="0,12,0,8" />
                             <Setter TargetName="HeaderContent" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="CollapsedHeaderContent" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="Toggle" Property="Grid.Row" Value="1" />
                             <Setter TargetName="Toggle" Property="Grid.Column" Value="0" />
                             <Setter TargetName="Toggle" Property="Grid.ColumnSpan" Value="2" />
                             <Setter TargetName="Toggle" Property="HorizontalAlignment" Value="Center" />
                         </Trigger>
+
+                        <!--  Last, so it beats the rail trigger turning the mark on.  -->
+                        <Trigger Property="CollapsedHeader" Value="{x:Null}">
+                            <Setter TargetName="CollapsedHeaderContent" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <!--
+                            A rail with no mark and no chevron would keep an empty band above the
+                            items, because the expanded header is only hidden, not removed.
+                        -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsCollapsed" Value="True" />
+                                <Condition Property="CollapsedHeader" Value="{x:Null}" />
+                                <Condition Property="IsToggleButtonVisible" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="HeaderArea" Property="Visibility" Value="Collapsed" />
+                        </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

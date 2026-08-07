@@ -76,6 +76,10 @@ ThemeManager.Apply(ApplicationTheme.System);  // follow Windows, and keep follow
 
 ```xml
 <celeste:Sidebar Header="Acme" SelectedItem="{Binding CurrentPage}" IsCollapsed="{Binding IsRail}">
+    <celeste:Sidebar.CollapsedHeader>
+        <Path Data="M10,0 L20,10 L10,20 L0,10 Z" Fill="{DynamicResource Celeste.Brush.Primary}" />
+    </celeste:Sidebar.CollapsedHeader>
+
     <celeste:SidebarGroupHeader Content="WORKSPACE" />
     <celeste:SidebarItem Content="Overview">
         <celeste:SidebarItem.Icon>
@@ -94,6 +98,8 @@ ThemeManager.Apply(ApplicationTheme.System);  // follow Windows, and keep follow
 ```
 
 Give every item an `Icon` if the sidebar can collapse: the rail hides labels and moves them into tooltips, so an item without an icon becomes an empty row. Celeste ships no icon set — `Celeste.SidebarItem.Icon` is a style that only makes your own `Path` follow the item's hover, selected, and disabled colors.
+
+`Header` is hidden in the rail too, and `CollapsedHeader` is what replaces it — a logo mark rather than a name, since the rail is only `CollapsedWidth` wide. It does not fall back to `Header`: a wordmark scaled into 56 pixels is unreadable. If you supply neither a mark nor the toggle button, the rail drops the header band instead of leaving it blank.
 
 Arrow keys move between items and step over `SidebarGroupHeader` and `SidebarSeparator`. The sidebar sets its own `Width` from `ExpandedWidth` and `CollapsedWidth`, so put it in an `Auto` grid column rather than sizing it yourself.
 

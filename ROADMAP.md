@@ -51,7 +51,7 @@ A vertical navigation control — the thing every one of these applications buil
 
 - `SidebarItem` with icon, label, and an optional trailing badge; `SidebarGroupHeader` and `SidebarSeparator` for grouping; a `Footer` region pinned to the bottom while the items scroll.
 - Selection is the source of truth and is bindable, so the sidebar works with any navigation stack the application already has. Celeste supplies no router.
-- **Collapsed (rail) state**: icons only at `CollapsedWidth`, with the label surfacing as a tooltip and group headers surviving as rules. `IsCollapsed` binds two ways, so the built-in chevron and the application's own layout rules drive the same property.
+- **Collapsed (rail) state**: icons only at `CollapsedWidth`, with the label surfacing as a tooltip and group headers surviving as rules. `CollapsedHeader` puts a logo mark where the header name was, and the band is dropped rather than left blank when there is no mark and no chevron. `IsCollapsed` binds two ways, so the built-in chevron and the application's own layout rules drive the same property.
 - Keyboard navigation across items, inherited from `ListBox`, stepping over headers and separators; a focus ring that survives the rail.
 - `SidebarAutomationPeer` keeps the list and selection semantics a screen reader needs to announce "3 of 7", and renames the control type so the user hears which list they landed in.
 

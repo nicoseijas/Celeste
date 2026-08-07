@@ -145,6 +145,56 @@ public class SidebarTests
         });
     }
 
+    [Fact]
+    public void TheRailSwapsTheHeaderForTheMark()
+    {
+        StaTestHost.Run(() =>
+        {
+            var sidebar = new Sidebar
+            {
+                Header = "Acme",
+                CollapsedHeader = new Border { Width = 20, Height = 20 },
+                Items = { new SidebarItem { Content = "Overview" } },
+            };
+
+            Realize(sidebar);
+            Assert.Equal(Visibility.Visible, PartOf(sidebar, "HeaderContent").Visibility);
+            Assert.Equal(Visibility.Collapsed, PartOf(sidebar, "CollapsedHeaderContent").Visibility);
+
+            sidebar.IsCollapsed = true;
+            Realize(sidebar);
+
+            // A wordmark squeezed into a 56px column is unreadable, so the rail shows the mark
+            // instead of scaling the header down.
+            Assert.Equal(Visibility.Collapsed, PartOf(sidebar, "HeaderContent").Visibility);
+            Assert.Equal(Visibility.Visible, PartOf(sidebar, "CollapsedHeaderContent").Visibility);
+        });
+    }
+
+    [Fact]
+    public void TheRailDropsTheHeaderBandWhenNothingIsLeftToPutInIt()
+    {
+        StaTestHost.Run(() =>
+        {
+            var sidebar = new Sidebar
+            {
+                Header = "Acme",
+                IsToggleButtonVisible = false,
+                Items = { new SidebarItem { Content = "Overview" } },
+            };
+
+            Realize(sidebar);
+            Assert.Equal(Visibility.Visible, PartOf(sidebar, "HeaderArea").Visibility);
+
+            sidebar.IsCollapsed = true;
+            Realize(sidebar);
+
+            // The expanded header is hidden rather than removed, so without this the rail keeps an
+            // empty band above the first destination.
+            Assert.Equal(Visibility.Collapsed, PartOf(sidebar, "HeaderArea").Visibility);
+        });
+    }
+
     [Theory]
     [InlineData(ApplicationTheme.Light)]
     [InlineData(ApplicationTheme.Dark)]
@@ -183,6 +233,9 @@ public class SidebarTests
         host.Arrange(new Rect(0, 0, 600, 400));
         host.UpdateLayout();
     }
+
+    private static FrameworkElement PartOf(Sidebar sidebar, string partName) =>
+        (FrameworkElement)sidebar.Template.FindName(partName, sidebar);
 
     private static FrameworkElement ItemRootOf(SidebarItem item) =>
         (FrameworkElement)item.Template.FindName("Root", item);

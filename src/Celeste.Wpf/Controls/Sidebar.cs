@@ -44,6 +44,14 @@ public class Sidebar : ListBox
             typeof(Sidebar),
             new PropertyMetadata(null));
 
+    /// <summary>Identifies the <see cref="CollapsedHeader"/> dependency property.</summary>
+    public static readonly DependencyProperty CollapsedHeaderProperty =
+        DependencyProperty.Register(
+            nameof(CollapsedHeader),
+            typeof(object),
+            typeof(Sidebar),
+            new PropertyMetadata(null));
+
     /// <summary>Identifies the <see cref="Footer"/> dependency property.</summary>
     public static readonly DependencyProperty FooterProperty =
         DependencyProperty.Register(
@@ -110,6 +118,22 @@ public class Sidebar : ListBox
     {
         get => GetValue(HeaderProperty);
         set => SetValue(HeaderProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the mark shown in place of <see cref="Header"/> once the sidebar is a rail —
+    /// a logo glyph rather than a name, because the rail is only <see cref="CollapsedWidth"/> wide.
+    /// </summary>
+    /// <remarks>
+    /// Leave it unset and the rail simply has no header. It does not fall back to
+    /// <see cref="Header"/>: a wordmark scaled into a 56 pixel column is unreadable, and guessing
+    /// an initial from arbitrary header content is not something a control can do well. With no
+    /// mark and no toggle button, the header band is dropped rather than left blank.
+    /// </remarks>
+    public object? CollapsedHeader
+    {
+        get => GetValue(CollapsedHeaderProperty);
+        set => SetValue(CollapsedHeaderProperty, value);
     }
 
     /// <summary>
