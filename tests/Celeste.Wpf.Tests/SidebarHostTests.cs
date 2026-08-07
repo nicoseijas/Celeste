@@ -157,6 +157,52 @@ public class SidebarHostTests
         });
     }
 
+    /// <summary>
+    /// The presentation follows the window, not just a container the test resized by hand: a host
+    /// that only re-reads its width on load would stay docked in a window the user narrowed.
+    /// </summary>
+    [Fact]
+    public void ResizingTheWindowChangesThePresentation()
+    {
+        StaTestHost.Run(() =>
+        {
+            var host = new SidebarHost { Pane = new Sidebar() };
+            var window = new Window
+            {
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                ShowInTaskbar = false,
+                Left = -4000,
+                Top = -4000,
+                Width = 1200,
+                Height = 400,
+                Content = host,
+            };
+
+            try
+            {
+                window.Show();
+                window.UpdateLayout();
+                Assert.Equal(SidebarDisplayMode.Docked, host.ActualDisplayMode);
+
+                window.Width = 800;
+                window.UpdateLayout();
+                Assert.Equal(SidebarDisplayMode.Rail, host.ActualDisplayMode);
+
+                window.Width = 480;
+                window.UpdateLayout();
+                Assert.Equal(SidebarDisplayMode.OffCanvas, host.ActualDisplayMode);
+
+                window.Width = 1200;
+                window.UpdateLayout();
+                Assert.Equal(SidebarDisplayMode.Docked, host.ActualDisplayMode);
+            }
+            finally
+            {
+                window.Close();
+            }
+        });
+    }
+
     [Fact]
     public void EscapeClosesTheOverlay()
     {
