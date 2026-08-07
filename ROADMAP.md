@@ -8,6 +8,7 @@ Version numbers are `0.x` throughout, so every entry below may break the public 
 
 | Mark | Meaning |
 | --- | --- |
+| ✅ | Shipped. Kept here so the milestone still reads as a whole. |
 | 🔜 | Next up. Design settled enough to start. |
 | 🧭 | Planned. Shape still open. |
 | 💭 | Considered. May never happen. |
@@ -44,19 +45,21 @@ Optional acrylic and Mica-like backdrops on Windows 11, off by default. Celeste 
 
 ## 0.3 — Navigation
 
-### 🔜 `Sidebar`
+### ✅ `Sidebar`
 
 A vertical navigation control — the thing every one of these applications builds by hand out of a `ListBox` and a `Border`.
 
-- Items with icon, label, and an optional trailing badge; groups with headers; a footer region pinned to the bottom for settings and account entries.
+- `SidebarItem` with icon, label, and an optional trailing badge; `SidebarGroupHeader` and `SidebarSeparator` for grouping; a `Footer` region pinned to the bottom while the items scroll.
 - Selection is the source of truth and is bindable, so the sidebar works with any navigation stack the application already has. Celeste supplies no router.
-- **Collapsed (rail) state**: icons only, at a fixed narrow width, with the label surfacing as a tooltip. Expanded ↔ collapsed is a bindable state, not just a click on a toggle button.
-- Keyboard navigation across items, `Home`/`End`, and a visible focus ring that survives the collapsed state.
-- Automation peers so a screen reader announces the sidebar as a navigation list rather than a stack of buttons.
+- **Collapsed (rail) state**: icons only at `CollapsedWidth`, with the label surfacing as a tooltip and group headers surviving as rules. `IsCollapsed` binds two ways, so the built-in chevron and the application's own layout rules drive the same property.
+- Keyboard navigation across items, inherited from `ListBox`, stepping over headers and separators; a focus ring that survives the rail.
+- `SidebarAutomationPeer` keeps the list and selection semantics a screen reader needs to announce "3 of 7", and renames the control type so the user hears which list they landed in.
+
+Still open, and deliberately not blocking the milestone: an icon-less item is an empty row in the rail, so a collapsible sidebar has to supply icons. The width is animated but nothing else is.
 
 ### 🔜 Off-canvas `Sidebar`
 
-The same control, presented as an overlay that slides in over the content instead of taking layout space.
+The same control, presented as an overlay that slides in over the content instead of taking layout space. Now the next thing to build, on top of the shipped `Sidebar` rather than beside it.
 
 - Overlay presentation with a scrim behind it; clicking the scrim or pressing `Esc` dismisses.
 - Focus is trapped while open and returned to the invoking element on close — an overlay that leaves `Tab` walking through the content underneath is worse than no overlay.
