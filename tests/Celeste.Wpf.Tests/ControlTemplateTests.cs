@@ -37,6 +37,7 @@ public class ControlTemplateTests
         nameof(Badge),
         nameof(ToggleSwitch),
         nameof(ProgressRing),
+        nameof(NavigationHost),
         nameof(Sidebar),
         nameof(SidebarHost),
         nameof(SidebarItem),
@@ -158,6 +159,7 @@ public class ControlTemplateTests
         nameof(Badge) => new Badge { Content = "New" },
         nameof(ToggleSwitch) => new ToggleSwitch { Content = "Label" },
         nameof(ProgressRing) => new ProgressRing(),
+        nameof(NavigationHost) => new NavigationHost { Content = "body" },
         nameof(Sidebar) => new Sidebar
         {
             Header = "Acme",

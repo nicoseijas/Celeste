@@ -1,0 +1,58 @@
+<!--
+    Celeste — NavigationHost.
+
+    A page surface and one scrolling region. The scroll viewer is a named part because the control
+    saves and restores its offset per page; turning IsScrollEnabled off disables scrolling rather
+    than removing the part, so the template stays one shape and the part is always there.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Celeste.Wpf.Controls">
+
+    <Style x:Key="Celeste.NavigationHost" TargetType="{x:Type controls:NavigationHost}">
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Background}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.Border}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="FontFamily" Value="{DynamicResource Celeste.FontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Body}" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Foreground}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="24" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:NavigationHost}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="True">
+                        <!--  Bare, like the sidebar's: ScrollBar carries an implicit Celeste style already.  -->
+                        <ScrollViewer x:Name="PART_ScrollViewer"
+                                      Padding="{TemplateBinding Padding}"
+                                      Focusable="False"
+                                      HorizontalScrollBarVisibility="Disabled"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ContentPresenter x:Name="PART_Content"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Content="{TemplateBinding Content}"
+                                              ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
+                        </ScrollViewer>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <!--  Disabled, not removed: the page keeps the full viewport and simply cannot scroll.  -->
+                        <Trigger Property="IsScrollEnabled" Value="False">
+                            <Setter TargetName="PART_ScrollViewer" Property="VerticalScrollBarVisibility" Value="Disabled" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource Celeste.NavigationHost}" TargetType="{x:Type controls:NavigationHost}" />
+
+</ResourceDictionary>

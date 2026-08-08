@@ -2,11 +2,44 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:celeste="https://celeste-ui.dev/wpf"
+        xmlns:sys="clr-namespace:System;assembly=System.Runtime"
         Title="Celeste Gallery"
         Width="1040"
         Height="760"
         Style="{StaticResource Celeste.Window}"
         WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!--  The page a destination stands for. Deliberately taller than the host, so the scroll position has somewhere to go.  -->
+        <DataTemplate x:Key="DemoPage">
+            <StackPanel>
+                <TextBlock Style="{StaticResource Celeste.TextBlock.Subtitle}" Text="{Binding}" />
+                <TextBlock Margin="0,6,0,0"
+                           Style="{StaticResource Celeste.TextBlock.Muted}"
+                           Text="Scroll down, pick another destination, then press Back: this page comes back where you left it, not at the top."
+                           TextWrapping="Wrap" />
+
+                <celeste:Card Margin="0,16,0,0" Header="Section one">
+                    <TextBlock Height="140"
+                               Style="{StaticResource Celeste.TextBlock.Muted}"
+                               Text="Celeste keeps no navigation state of its own. The host watches its Content and records where the application has been."
+                               TextWrapping="Wrap" />
+                </celeste:Card>
+                <celeste:Card Margin="0,12,0,0" Header="Section two">
+                    <TextBlock Height="140"
+                               Style="{StaticResource Celeste.TextBlock.Muted}"
+                               Text="Forward is a fresh look at a page and starts at the top; only Back restores a position."
+                               TextWrapping="Wrap" />
+                </celeste:Card>
+                <celeste:Card Margin="0,12,0,0" Header="Section three">
+                    <TextBlock Height="140"
+                               Style="{StaticResource Celeste.TextBlock.Muted}"
+                               Text="The back stack is capped, so a session that runs for days does not hold on to every page it ever showed."
+                               TextWrapping="Wrap" />
+                </celeste:Card>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
 
     <Grid Margin="24">
         <Grid.RowDefinitions>
@@ -515,6 +548,59 @@
                                                        TextWrapping="Wrap" />
                                         </Grid>
                                     </celeste:SidebarHost>
+                                </Border>
+                            </StackPanel>
+                        </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0"
+                                      Header="Pages and history"
+                                      Description="NavigationHost holds the page the sidebar selected, keeps a back stack, and puts each page back where you left it.">
+                            <StackPanel>
+                                <StackPanel Margin="0,0,0,14" Orientation="Horizontal">
+                                    <!--  Outside the host, so it points at one: BrowseBack routes, and CommandTarget is how a button in the chrome reaches it.  -->
+                                    <Button Command="NavigationCommands.BrowseBack"
+                                            CommandTarget="{Binding ElementName=DemoNavigation}"
+                                            Content="Back"
+                                            Style="{StaticResource Celeste.Button.Outline}" />
+                                    <TextBlock Margin="16,0,0,0"
+                                               VerticalAlignment="Center"
+                                               Style="{StaticResource Celeste.TextBlock.Muted}"
+                                               Text="{Binding BackStackDepth, ElementName=DemoNavigation, StringFormat='{}{0} page(s) behind'}" />
+                                </StackPanel>
+
+                                <Border Height="360"
+                                        BorderBrush="{DynamicResource Celeste.Brush.Border}"
+                                        BorderThickness="1"
+                                        ClipToBounds="True"
+                                        CornerRadius="{DynamicResource Celeste.Radius.Md}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!--  Plain strings, so SelectedItem is the page itself and the binding below can run both ways.  -->
+                                        <celeste:Sidebar x:Name="PagesSidebar"
+                                                         BorderThickness="0,0,1,0"
+                                                         ExpandedWidth="170"
+                                                         IsToggleButtonVisible="False"
+                                                         SelectedIndex="0">
+                                            <celeste:Sidebar.ItemsSource>
+                                                <x:Array Type="{x:Type sys:String}">
+                                                    <sys:String>Overview</sys:String>
+                                                    <sys:String>Reports</sys:String>
+                                                    <sys:String>Members</sys:String>
+                                                    <sys:String>Billing</sys:String>
+                                                </x:Array>
+                                            </celeste:Sidebar.ItemsSource>
+                                        </celeste:Sidebar>
+
+                                        <!--  TwoWay: Back writes the previous page here, and the sidebar has to follow it.  -->
+                                        <celeste:NavigationHost x:Name="DemoNavigation"
+                                                                Grid.Column="1"
+                                                                Content="{Binding SelectedItem, ElementName=PagesSidebar, Mode=TwoWay}"
+                                                                ContentTemplate="{StaticResource DemoPage}" />
+                                    </Grid>
                                 </Border>
                             </StackPanel>
                         </celeste:Card>
