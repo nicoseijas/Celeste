@@ -69,9 +69,16 @@ Still open, and deliberately not blocking the milestone: an icon-less item is an
 
 Still open: the host has no automation peer of its own, and an open overlay is not announced as modal. Focus is trapped and returned, which is the behavioral half of that.
 
-### 🔜 `NavigationHost`
+### ✅ `NavigationHost`
 
 A content host that pairs with `Sidebar`: holds the current page, keeps a back stack, and preserves scroll position per page. Deliberately after `Sidebar`, because a navigation control that assumes its own host is a control that cannot be dropped into an existing application.
+
+- It does not navigate. It watches its own `Content`, so binding that to a selection is the entire integration and Celeste never becomes the router. Bind two ways: `GoBack` writes the previous page back, and the selection has to follow.
+- Back is `NavigationCommands.BrowseBack` rather than a Celeste command, so it arrives with the gestures Windows already assigns to it. `CanGoBack` and `BackStackDepth` are bindable.
+- Scroll position is restored per page on the way back only; forward is a fresh look at a page and starts at the top.
+- `MaxBackStackDepth` caps the stack, and the scroll position of a page that falls off it is dropped too. An unbounded stack is an unbounded reference to every page an application has ever shown.
+
+Still open: there is no forward stack, no transition between pages, and no automation peer of its own. Pages that scroll themselves need `IsScrollEnabled="False"`, and then nothing is restored, because the host is no longer what scrolls.
 
 ### 🧭 Breadcrumbs and `TabStrip`
 

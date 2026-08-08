@@ -128,6 +128,26 @@ Celeste never opens the pane on its own — it cannot know where your menu butto
 
 While the overlay is open, a scrim covers the content, `Tab` stays inside the pane, and `Esc` or a click on the scrim closes it and returns focus. Set `DisplayMode` to `Docked`, `Rail`, or `OffCanvas` to drive the presentation yourself; the breakpoints are then ignored. `ActualDisplayMode` always reports what you are actually looking at.
 
+### Pages and history
+
+`NavigationHost` holds the page and remembers where you have been. It does not navigate: it watches its own `Content`, so binding that to a selection is the whole integration and Celeste never becomes your router.
+
+```xml
+<celeste:NavigationHost x:Name="Pages"
+                        Content="{Binding SelectedItem, ElementName=Nav, Mode=TwoWay}"
+                        ContentTemplate="{StaticResource PageTemplate}" />
+
+<Button Command="NavigationCommands.BrowseBack" CommandTarget="{Binding ElementName=Pages}" Content="Back" />
+```
+
+Bind `Content` **two ways** when the pages come from a selection. Going back writes the previous page into `Content`, and a one-way binding would leave the sidebar highlighting a page the host is no longer showing.
+
+Back is `NavigationCommands.BrowseBack`, not a command of Celeste's own, so it arrives with the gestures Windows already assigns. It routes, so put the button inside the host or point it at one with `CommandTarget`, as above. `CanGoBack` and `BackStackDepth` are bindable; `GoBack()` and `ClearHistory()` are there for code.
+
+Each page is put back where you left it. Going forward is a fresh look and starts at the top — only Back restores a position. The stack is capped by `MaxBackStackDepth` (10 by default), because an unbounded stack is an unbounded reference to every page the application has ever shown. If your pages scroll themselves, set `IsScrollEnabled="False"` so they are not nested inside a second scrolling region; positions are then no longer restored, since the host is no longer what scrolls.
+
+There is no forward stack and no transition between pages.
+
 ## Theming it
 
 Colors are semantic, not literal. `Celeste.Brush.Primary` is "the brand action color", and the light and dark dictionaries define it differently. To recolor the library, override the tokens after merging Celeste:
@@ -157,7 +177,7 @@ For per-control tweaks without retemplating, `Celeste.Wpf.Controls.ControlHelper
 
 Alpha. The token names and the public control API are still open to change; treat `0.x` releases as breaking. What exists is covered by tests that apply every control's template in both themes on a real WPF dispatcher, so the styles load and measure — but they have not been through a wide range of real applications yet.
 
-Not covered yet: `Menu` / `ContextMenu`, `DataGrid`, `TreeView`, `Expander`, `Calendar` / `DatePicker`, and dialogs. Those controls keep their default WPF appearance in a Celeste application, which is visible and jarring. Contributions in that direction are the most useful ones right now. Navigation has a `Sidebar` and a `SidebarHost` that presents it docked, as a rail, or off-canvas, but no navigation host that owns pages and a back stack yet.
+Not covered yet: `Menu` / `ContextMenu`, `DataGrid`, `TreeView`, `Expander`, `Calendar` / `DatePicker`, and dialogs. Those controls keep their default WPF appearance in a Celeste application, which is visible and jarring. Contributions in that direction are the most useful ones right now. Navigation is the one area that is filled in: `Sidebar`, a `SidebarHost` that presents it docked, as a rail, or off-canvas, and a `NavigationHost` that holds pages and a back stack.
 
 [ROADMAP.md](ROADMAP.md) has the order those gaps are being closed in, plus what is deliberately out of scope.
 
