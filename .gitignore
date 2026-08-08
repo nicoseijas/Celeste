@@ -19,6 +19,7 @@ artifacts/
 *.userprefs
 .vscode/*
 !.vscode/extensions.json
+.claude/
 
 ## Test results
 [Tt]est[Rr]esult*/
