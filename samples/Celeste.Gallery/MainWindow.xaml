@@ -307,32 +307,147 @@
             <!--  ===========  Typography  ===========  -->
             <TabItem Header="Typography">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <celeste:Card Header="Type scale">
-                        <StackPanel>
-                            <TextBlock Style="{StaticResource Celeste.TextBlock.Display}" Text="Display 34" />
-                            <TextBlock Margin="0,8,0,0"
-                                       Style="{StaticResource Celeste.TextBlock.Title}"
-                                       Text="Title 24" />
-                            <TextBlock Margin="0,8,0,0"
-                                       Style="{StaticResource Celeste.TextBlock.Subtitle}"
-                                       Text="Subtitle 18" />
-                            <TextBlock Margin="0,8,0,0"
-                                       Style="{StaticResource Celeste.TextBlock.Strong}"
-                                       Text="Body strong 13" />
-                            <TextBlock Margin="0,8,0,0"
-                                       Style="{StaticResource Celeste.TextBlock.Body}"
-                                       Text="Body 13 — the default reading size." />
-                            <TextBlock Margin="0,8,0,0"
-                                       Style="{StaticResource Celeste.TextBlock.Muted}"
-                                       Text="Muted 13 — secondary information." />
-                            <TextBlock Margin="0,8,0,0"
-                                       Style="{StaticResource Celeste.TextBlock.Caption}"
-                                       Text="CAPTION 11 — labels and metadata." />
-                            <TextBlock Margin="0,8,0,0"
-                                       Style="{StaticResource Celeste.TextBlock.Code}"
-                                       Text="Code 13 — ThemeManager.Apply(ApplicationTheme.Dark);" />
-                        </StackPanel>
-                    </celeste:Card>
+                    <StackPanel>
+                        <celeste:Card Header="Type scale"
+                                      Description="Six sizes and three weights. The specimen is real text, because a label like &quot;Display 34&quot; hides what the letterforms do.">
+                            <!--  Two columns: the token on the left, the size it produces on the right.  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock VerticalAlignment="Bottom"
+                                           Style="{StaticResource Celeste.TextBlock.Caption}"
+                                           Text="Display · 34 · SemiBold" />
+                                <TextBlock Grid.Column="1"
+                                           Style="{StaticResource Celeste.TextBlock.Display}"
+                                           Text="Everything in its place" />
+
+                                <TextBlock Grid.Row="1"
+                                           Margin="0,18,0,0"
+                                           VerticalAlignment="Bottom"
+                                           Style="{StaticResource Celeste.TextBlock.Caption}"
+                                           Text="Title · 24 · SemiBold" />
+                                <TextBlock Grid.Row="1"
+                                           Grid.Column="1"
+                                           Margin="0,18,0,0"
+                                           Style="{StaticResource Celeste.TextBlock.Title}"
+                                           Text="Workspace settings" />
+
+                                <TextBlock Grid.Row="2"
+                                           Margin="0,18,0,0"
+                                           VerticalAlignment="Bottom"
+                                           Style="{StaticResource Celeste.TextBlock.Caption}"
+                                           Text="Subtitle · 18 · SemiBold" />
+                                <TextBlock Grid.Row="2"
+                                           Grid.Column="1"
+                                           Margin="0,18,0,0"
+                                           Style="{StaticResource Celeste.TextBlock.Subtitle}"
+                                           Text="Notifications and delivery" />
+
+                                <TextBlock Grid.Row="3"
+                                           Margin="0,18,0,0"
+                                           VerticalAlignment="Bottom"
+                                           Style="{StaticResource Celeste.TextBlock.Caption}"
+                                           Text="Strong · 13 · SemiBold" />
+                                <TextBlock Grid.Row="3"
+                                           Grid.Column="1"
+                                           Margin="0,18,0,0"
+                                           Style="{StaticResource Celeste.TextBlock.Strong}"
+                                           Text="Three members still need to accept the invitation." />
+
+                                <TextBlock Grid.Row="4"
+                                           Margin="0,14,0,0"
+                                           VerticalAlignment="Bottom"
+                                           Style="{StaticResource Celeste.TextBlock.Caption}"
+                                           Text="Body · 13 · Regular" />
+                                <TextBlock Grid.Row="4"
+                                           Grid.Column="1"
+                                           Margin="0,14,0,0"
+                                           Style="{StaticResource Celeste.TextBlock.Body}"
+                                           Text="The reading size. Long paragraphs, dialog text, and anything the user has to take in word by word — 0123456789, «guillemets», em—dashes, and ﬁ ligatures included."
+                                           TextWrapping="Wrap" />
+
+                                <TextBlock Grid.Row="5"
+                                           Margin="0,14,0,0"
+                                           VerticalAlignment="Bottom"
+                                           Style="{StaticResource Celeste.TextBlock.Caption}"
+                                           Text="Muted · 13 · Regular" />
+                                <TextBlock Grid.Row="5"
+                                           Grid.Column="1"
+                                           Margin="0,14,0,0"
+                                           Style="{StaticResource Celeste.TextBlock.Muted}"
+                                           Text="Same size as Body, lower contrast. For text that supports the line above it and must not compete with it."
+                                           TextWrapping="Wrap" />
+
+                                <TextBlock Grid.Row="6"
+                                           Margin="0,14,0,0"
+                                           VerticalAlignment="Bottom"
+                                           Style="{StaticResource Celeste.TextBlock.Caption}"
+                                           Text="Caption · 11 · Regular" />
+                                <TextBlock Grid.Row="6"
+                                           Grid.Column="1"
+                                           Margin="0,14,0,0"
+                                           Style="{StaticResource Celeste.TextBlock.Caption}"
+                                           Text="LAST SYNCED 4 MINUTES AGO · 12 OF 40 SEATS USED" />
+                            </Grid>
+                        </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0"
+                                      Header="Monospace"
+                                      Description="Code renders with Display formatting, so stems stay on the pixel grid and columns line up.">
+                            <Border Padding="14,12"
+                                    Background="{DynamicResource Celeste.Brush.SurfaceSunken}"
+                                    BorderBrush="{DynamicResource Celeste.Brush.Border}"
+                                    BorderThickness="1"
+                                    CornerRadius="{DynamicResource Celeste.Radius.Md}">
+                                <!--  Separate blocks, not LineBreak: XAML would collapse the indentation into a leading space on every line.  -->
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource Celeste.TextBlock.Code}" Text="ThemeManager.Apply(ApplicationTheme.Dark);" />
+                                    <TextBlock Style="{StaticResource Celeste.TextBlock.Code}" Text="ThemeManager.Apply(ApplicationTheme.System);" />
+                                    <TextBlock Margin="0,14,0,0"
+                                               Style="{StaticResource Celeste.TextBlock.Code}"
+                                               Text="// 0O1lI — the shapes a proportional face confuses." />
+                                </StackPanel>
+                            </Border>
+                        </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0"
+                                      Header="In context"
+                                      Description="The same styles doing their real job: one hierarchy, read top to bottom.">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource Celeste.TextBlock.Caption}" Text="RELEASE 0.3.0 · 10 AUGUST 2026" />
+                                <TextBlock Margin="0,4,0,0"
+                                           Style="{StaticResource Celeste.TextBlock.Title}"
+                                           Text="Navigation, end to end" />
+                                <TextBlock Margin="0,8,0,0"
+                                           Style="{StaticResource Celeste.TextBlock.Muted}"
+                                           Text="A sidebar that collapses to a rail, a host that picks its own display mode, and a back stack that remembers where each page was left."
+                                           TextWrapping="Wrap" />
+
+                                <TextBlock Margin="0,20,0,0"
+                                           Style="{StaticResource Celeste.TextBlock.Subtitle}"
+                                           Text="Breaking changes" />
+                                <TextBlock Margin="0,8,0,0"
+                                           Style="{StaticResource Celeste.TextBlock.Strong}"
+                                           Text="SidebarHost no longer opens its own pane." />
+                                <TextBlock Margin="0,4,0,0"
+                                           Style="{StaticResource Celeste.TextBlock.Body}"
+                                           Text="The application decides where the toggle lives and routes TogglePaneCommand to it. Applications that relied on the built-in button must add one to their chrome."
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </celeste:Card>
+                    </StackPanel>
                 </ScrollViewer>
             </TabItem>
 
