@@ -12,9 +12,13 @@ Celeste is a UI library for WPF applications that need to look current without a
 
 ## Installation
 
+Every release so far is a prerelease, and NuGet hides those unless you ask for them:
+
 ```powershell
-dotnet add package Celeste.Wpf
+dotnet add package Celeste.Wpf --prerelease
 ```
+
+Pin the exact version instead once you depend on it — `0.x` releases may break the API, which is what the version number is telling you.
 
 Then merge the two dictionaries into `App.xaml`. Order matters only for readability — control styles reference color tokens through `DynamicResource`.
 
@@ -204,7 +208,7 @@ Colors are semantic, not literal. `Celeste.Brush.Primary` is "the brand action c
 <SolidColorBrush x:Key="Celeste.Brush.PrimaryHover" Color="#FF6D28D9" />
 ```
 
-The full token list lives in [`src/Celeste.Wpf/Themes/Light.xaml`](src/Celeste.Wpf/Themes/Light.xaml). Every key defined there also exists in `Dark.xaml`; a test enforces that, because a key present in only one theme becomes a missing brush the moment a user toggles.
+The full token list lives in [`src/Celeste.Wpf/Themes/Light.xaml`](https://github.com/nicoseijas/Celeste/blob/main/src/Celeste.Wpf/Themes/Light.xaml). Every key defined there also exists in `Dark.xaml`; a test enforces that, because a key present in only one theme becomes a missing brush the moment a user toggles.
 
 For per-control tweaks without retemplating, `Celeste.Wpf.Controls.ControlHelper` exposes attached properties: `CornerRadius`, `PlaceholderText`, and `IconContent`.
 
@@ -221,7 +225,7 @@ Alpha. The token names and the public control API are still open to change; trea
 
 Not covered yet: `Menu` / `ContextMenu`, `DataGrid`, `TreeView`, `Expander`, `Calendar` / `DatePicker`, and dialogs. Those controls keep their default WPF appearance in a Celeste application, which is visible and jarring. Contributions in that direction are the most useful ones right now. Two areas are filled in: navigation — `Sidebar`, a `SidebarHost` that presents it docked, as a rail, or off-canvas, and a `NavigationHost` that holds pages and a back stack — and pictures, with `ImageView`, `Avatar`, and `MasonryPanel`.
 
-[ROADMAP.md](ROADMAP.md) has the order those gaps are being closed in, plus what is deliberately out of scope.
+[ROADMAP.md](https://github.com/nicoseijas/Celeste/blob/main/ROADMAP.md) has the order those gaps are being closed in, plus what is deliberately out of scope.
 
 ## Repository layout
 
@@ -243,8 +247,8 @@ Requires the .NET 10 SDK (pinned in `global.json`) and Windows. The library itse
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). New control styles need an entry in the gallery and a row in the template-application test; that is what keeps a style from silently breaking in one of the two themes.
+See [CONTRIBUTING.md](https://github.com/nicoseijas/Celeste/blob/main/CONTRIBUTING.md). New control styles need an entry in the gallery and a row in the template-application test; that is what keeps a style from silently breaking in one of the two themes.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE](https://github.com/nicoseijas/Celeste/blob/main/LICENSE).

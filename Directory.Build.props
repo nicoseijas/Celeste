@@ -22,11 +22,22 @@
     <Company>Celeste</Company>
     <Copyright>Copyright (c) Celeste contributors</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/celeste-ui/celeste</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/celeste-ui/celeste</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/nicoseijas/Celeste</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nicoseijas/Celeste.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Symbols">
+    <!--
+      A .snupkg alongside the package, so a consumer stepping into Celeste gets real source instead of
+      decompiled guesses. The SDK supplies Source Link for GitHub, and PublishRepositoryUrl above is
+      what lets the debugger find the commit these binaries came from.
+    -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 
 </Project>
