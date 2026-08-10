@@ -12,6 +12,16 @@ dotnet run --project samples/Celeste.Gallery
 
 The gallery is the fastest way to see a change. Run it, switch the theme selector between System, Light, and Dark, and look at the control you touched in both themes before opening a pull request.
 
+CI also verifies formatting and that the package is usable, both of which you can run yourself:
+
+```powershell
+dotnet format --verify-no-changes
+dotnet pack src/Celeste.Wpf/Celeste.Wpf.csproj -c Release -o artifacts
+./eng/validate-package.ps1
+```
+
+The last one builds a throwaway WPF app outside the repository against the packed `.nupkg`, on both target frameworks. Run it after anything that changes what ships: a new `Themes/` file, a change to the `.csproj`, a new public type. `net8.0-windows` is only ever compiled here, so that script is the one place it gets consumed.
+
 ## Where things live
 
 | Path | Contents |

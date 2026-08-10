@@ -42,7 +42,17 @@ jobs:
       - name: Pack
         run: dotnet pack src/Celeste.Wpf/Celeste.Wpf.csproj --no-build --configuration Release --output artifacts
 
+      # Packing proves a .nupkg came out of the build, not that anyone can use it. This restores it
+      # into a project created outside the repository — so it inherits none of the build props — and
+      # compiles XAML that resolves the library's own xmlns, on both target frameworks. net8.0-windows
+      # is otherwise only compiled here, never consumed.
+      - name: Validate the package from a clean consumer
+        shell: pwsh
+        run: ./eng/validate-package.ps1 -WorkingDirectory "${{ runner.temp }}/package-validation"
+
       - uses: actions/upload-artifact@v4
         with:
           name: nupkg
-          path: artifacts/*.nupkg
+          path: |
+            artifacts/*.nupkg
+            artifacts/*.snupkg
