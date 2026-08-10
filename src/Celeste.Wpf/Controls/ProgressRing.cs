@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 
 namespace Celeste.Wpf.Controls;
@@ -46,4 +47,13 @@ public class ProgressRing : Control
         get => (double)GetValue(StrokeThicknessProperty);
         set => SetValue(StrokeThicknessProperty, value);
     }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// A progress bar, because that is what it is: work in progress whose amount is unknown. Give it
+    /// an <c>AutomationProperties.Name</c> saying what is being waited for — "spinner" tells a screen
+    /// reader user nothing they can act on.
+    /// </remarks>
+    protected override AutomationPeer OnCreateAutomationPeer() =>
+        new CelesteAutomationPeer(this, AutomationControlType.ProgressBar);
 }

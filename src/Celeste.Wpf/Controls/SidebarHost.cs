@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -198,6 +199,15 @@ public class SidebarHost : ContentControl
         get => (double)GetValue(OffCanvasBreakpointProperty);
         set => SetValue(OffCanvasBreakpointProperty, value);
     }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// A group holding the pane and the content beside it. The pane reports itself: a
+    /// <see cref="Sidebar"/> has its own peer. An open off-canvas pane is still not announced as
+    /// modal, which UIA has no non-window way to express.
+    /// </remarks>
+    protected override AutomationPeer OnCreateAutomationPeer() =>
+        new CelesteAutomationPeer(this, AutomationControlType.Group);
 
     /// <inheritdoc />
     public override void OnApplyTemplate()

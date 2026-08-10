@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
@@ -184,6 +185,15 @@ public class ImageView : Control
     /// with every other view that asked for the same URI at the same size.
     /// </summary>
     public ImageSource? DecodedImage => (ImageSource?)GetValue(DecodedImageProperty);
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// An image, with no name unless the application sets <c>AutomationProperties.Name</c>. That is
+    /// deliberate: a picture with no alternative text is either decorative, in which case an unnamed
+    /// image is right, or it is missing one, and inventing a name from the file would hide that.
+    /// </remarks>
+    protected override AutomationPeer OnCreateAutomationPeer() =>
+        new CelesteAutomationPeer(this, AutomationControlType.Image);
 
     /// <inheritdoc />
     protected override Size MeasureOverride(Size constraint)

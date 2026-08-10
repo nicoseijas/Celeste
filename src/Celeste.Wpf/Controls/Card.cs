@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 
 namespace Celeste.Wpf.Controls;
@@ -62,4 +63,12 @@ public class Card : HeaderedContentControl
         get => (CardElevation)GetValue(ElevationProperty);
         set => SetValue(ElevationProperty, value);
     }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// A group, which is what a card is: a labelled region that holds other controls. The header is
+    /// the label, so it stands in as the name when the application has not set one.
+    /// </remarks>
+    protected override AutomationPeer OnCreateAutomationPeer() =>
+        new CelesteAutomationPeer(this, AutomationControlType.Group, () => Header?.ToString());
 }

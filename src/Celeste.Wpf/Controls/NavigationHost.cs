@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -185,6 +186,14 @@ public class NavigationHost : ContentControl
         _scrollOffsets.Clear();
         UpdateBackStackProperties();
     }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// A group: the region a page is shown in. The pages carry their own accessible structure, and
+    /// the host has no identity beyond holding whichever one is current.
+    /// </remarks>
+    protected override AutomationPeer OnCreateAutomationPeer() =>
+        new CelesteAutomationPeer(this, AutomationControlType.Group);
 
     /// <inheritdoc />
     public override void OnApplyTemplate()

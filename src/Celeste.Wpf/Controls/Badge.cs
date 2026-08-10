@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 
 namespace Celeste.Wpf.Controls;
@@ -25,4 +26,12 @@ public class Badge : ContentControl
         get => (BadgeVariant)GetValue(VariantProperty);
         set => SetValue(VariantProperty, value);
     }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Text, not a button: a badge is a piece of status a reader needs to hear, and nothing happens
+    /// when it is clicked. Its content is that text, so that is the name.
+    /// </remarks>
+    protected override AutomationPeer OnCreateAutomationPeer() =>
+        new CelesteAutomationPeer(this, AutomationControlType.Text, () => Content?.ToString());
 }

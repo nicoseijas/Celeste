@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls.Primitives;
 
 namespace Celeste.Wpf.Controls;
@@ -18,4 +19,7 @@ public class ToggleSwitch : ToggleButton
         DefaultStyleKeyProperty.OverrideMetadata(
             typeof(ToggleSwitch),
             new FrameworkPropertyMetadata(typeof(ToggleSwitch)));
+
+    /// <inheritdoc />
+    protected override AutomationPeer OnCreateAutomationPeer() => new ToggleSwitchAutomationPeer(this);
 }

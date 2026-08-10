@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 
 namespace Celeste.Wpf.Controls;
@@ -75,4 +76,13 @@ public class Avatar : Control
         get => (AvatarSize)GetValue(SizeProperty);
         set => SetValue(SizeProperty, value);
     }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// An image whose name falls back to the initials. Set <c>AutomationProperties.Name</c> to the
+    /// person's name: initials abbreviate for people who can see the circle, and "NS" is not what
+    /// someone listening needs to hear.
+    /// </remarks>
+    protected override AutomationPeer OnCreateAutomationPeer() =>
+        new CelesteAutomationPeer(this, AutomationControlType.Image, () => Initials);
 }
