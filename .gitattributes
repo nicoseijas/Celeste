@@ -1,0 +1,11 @@
+# Line endings are decided here rather than by each contributor's core.autocrlf, which is a machine
+# setting and therefore not a guarantee. The repository stores LF; working trees get CRLF, which is
+# what .editorconfig asks for and what a Windows-only library wants in an editor.
+* text=auto eol=crlf
+
+# Bytes, not text: nothing here should ever have a line ending rewritten inside it.
+*.png binary
+*.jpg binary
+*.ico binary
+*.snk binary
+*.pfx binary
