@@ -35,13 +35,19 @@ public static class ImageLoader
     /// <summary>Bytes of encoded image data accepted by default, before decoding.</summary>
     private const long DefaultMaxSourceBytes = 32L * 1024 * 1024;
 
+    /// <summary>
+    /// Pixels accepted in a decoded image by default. At four bytes per pixel this is about 244 MiB,
+    /// which clears any real photograph and still refuses an image whose only purpose is to be
+    /// enormous once decompressed.
+    /// </summary>
+    private const long DefaultMaxDecodedPixels = 64L * 1000 * 1000;
+
     /// <summary>Dead entries are swept once the cache passes this size.</summary>
     private const int PruneThreshold = 256;
 
     private const int CopyBufferSize = 81920;
 
     private const string PackScheme = "pack";
-    private const string ApplicationScheme = "application";
 
     private static readonly TimeSpan DefaultHttpTimeout = TimeSpan.FromSeconds(30);
 
@@ -52,6 +58,7 @@ public static class ImageLoader
 
     private static HttpClient? _httpClient;
     private static long _maxSourceBytes = DefaultMaxSourceBytes;
+    private static long _maxDecodedPixels = DefaultMaxDecodedPixels;
 
     /// <summary>
     /// Gets or sets the client used for <c>http</c> and <c>https</c> sources. The default one has a
@@ -95,11 +102,33 @@ public static class ImageLoader
     }
 
     /// <summary>
+    /// Gets or sets the largest decoded image accepted, in pixels. Defaults to 64 million, roughly
+    /// 244 MiB of pixel data.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="MaxSourceBytes"/> bounds the file; this bounds what the file expands into, which is
+    /// not the same number. A few hundred kilobytes of compressed data can describe an image of tens
+    /// of thousands of pixels on a side, and decoding it is where the memory goes. The check is made
+    /// against the size actually being decoded, so a thumbnail request is judged as a thumbnail
+    /// however large the original is.
+    /// </remarks>
+    public static long MaxDecodedPixels
+    {
+        get => Interlocked.Read(ref _maxDecodedPixels);
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+            Interlocked.Exchange(ref _maxDecodedPixels, value);
+        }
+    }
+
+    /// <summary>
     /// Loads <paramref name="source"/> and returns a frozen image.
     /// </summary>
     /// <param name="source">
-    /// An absolute URI. <c>http</c>, <c>https</c>, <c>file</c>, <c>pack</c>, and
-    /// <c>application</c> are supported; anything else throws <see cref="NotSupportedException"/>.
+    /// An absolute URI. <c>http</c>, <c>https</c>, <c>file</c>, and <c>pack</c> are supported;
+    /// anything else throws <see cref="NotSupportedException"/>. A resource compiled into an
+    /// assembly is <c>pack://application:,,,/Assembly;component/path</c>.
     /// </param>
     /// <param name="decodePixelWidth">
     /// The width to decode to, in pixels, or 0 for the image's own resolution. A value wider than
@@ -110,7 +139,10 @@ public static class ImageLoader
     /// <exception cref="ArgumentNullException"><paramref name="source"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="source"/> is a relative URI.</exception>
     /// <exception cref="NotSupportedException">The URI scheme is not one of the supported ones.</exception>
-    /// <exception cref="InvalidDataException">The source is larger than <see cref="MaxSourceBytes"/>.</exception>
+    /// <exception cref="InvalidDataException">
+    /// The source is larger than <see cref="MaxSourceBytes"/>, decodes to more than
+    /// <see cref="MaxDecodedPixels"/>, or does not describe an image with a size.
+    /// </exception>
     public static async Task<ImageSource> LoadAsync(
         Uri source,
         int decodePixelWidth = 0,
@@ -197,7 +229,7 @@ public static class ImageLoader
         // while Gate is held. Neither is a place to block.
         using MemoryStream encoded = await Task.Run(() => ReadAsync(source)).ConfigureAwait(false);
 
-        ImageSource image = Decode(encoded, key.DecodePixelWidth);
+        ImageSource image = Decode(encoded, source, key.DecodePixelWidth);
 
         lock (Gate)
         {
@@ -257,7 +289,7 @@ public static class ImageLoader
             return await CopyAsync(file, source, limit).ConfigureAwait(false);
         }
 
-        if (source.Scheme is PackScheme or ApplicationScheme)
+        if (source.Scheme == PackScheme)
         {
             // Throws IOException when the resource is not in the assembly, which is the answer we
             // want: a missing resource is a failed image, not a crash.
@@ -268,8 +300,12 @@ public static class ImageLoader
             return await CopyAsync(content, source, limit).ConfigureAwait(false);
         }
 
+        // 'application' is deliberately not in that list. It parses as a URI scheme, which makes it
+        // look supported, but WPF only understands it as the authority of a pack URI:
+        // Application.GetResourceStream rejects application:///x and asks for pack://application:,,,/.
         throw new NotSupportedException(
-            $"Cannot load '{source}': the '{source.Scheme}' scheme is not supported. Use http, https, file, pack, or application.");
+            $"Cannot load '{source}': the '{source.Scheme}' scheme is not supported. Use http, https, " +
+            "file, or pack — a resource in an assembly is pack://application:,,,/Assembly;component/path.");
     }
 
     private static async Task<MemoryStream> CopyAsync(Stream content, Uri source, long limit)
@@ -297,12 +333,22 @@ public static class ImageLoader
         return buffer;
     }
 
-    private static BitmapImage Decode(MemoryStream encoded, int decodePixelWidth)
+    private static BitmapImage Decode(MemoryStream encoded, Uri source, int decodePixelWidth)
     {
-        // The header alone gives the natural width, which is what keeps DecodePixelWidth from
-        // asking a 64-pixel icon to decode at 400 and paying for the upscale in memory.
+        // The header alone gives the natural size, which does two things: it keeps DecodePixelWidth
+        // from asking a 64-pixel icon to decode at 400 and paying for the upscale in memory, and it
+        // is the only chance to refuse an image before its pixels are allocated.
         var probe = BitmapFrame.Create(encoded, BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
-        int natural = probe.PixelWidth;
+        int naturalWidth = probe.PixelWidth;
+        int naturalHeight = probe.PixelHeight;
+
+        if (naturalWidth <= 0 || naturalHeight <= 0)
+        {
+            throw new InvalidDataException($"'{source}' reports a size of {naturalWidth}x{naturalHeight}.");
+        }
+
+        bool downscaling = decodePixelWidth > 0 && decodePixelWidth < naturalWidth;
+        GuardDecodedSize(source, naturalWidth, naturalHeight, downscaling ? decodePixelWidth : naturalWidth);
 
         encoded.Position = 0;
 
@@ -311,7 +357,7 @@ public static class ImageLoader
         bitmap.CacheOption = BitmapCacheOption.OnLoad;
         bitmap.StreamSource = encoded;
 
-        if (decodePixelWidth > 0 && decodePixelWidth < natural)
+        if (downscaling)
         {
             bitmap.DecodePixelWidth = decodePixelWidth;
         }
@@ -321,6 +367,25 @@ public static class ImageLoader
         // Frozen: the decode happens on a thread pool thread and the result crosses to the UI one.
         bitmap.Freeze();
         return bitmap;
+    }
+
+    /// <summary>
+    /// Refuses an image whose decoded pixel count is over <see cref="MaxDecodedPixels"/>. Widths and
+    /// heights are <see cref="int"/>, so the product is computed in <see cref="long"/> and cannot
+    /// overflow into a value that passes the check.
+    /// </summary>
+    private static void GuardDecodedSize(Uri source, int naturalWidth, int naturalHeight, int decodedWidth)
+    {
+        long decodedHeight = Math.Max(1, (long)Math.Round((double)naturalHeight * decodedWidth / naturalWidth));
+        long pixels = (long)decodedWidth * decodedHeight;
+        long limit = MaxDecodedPixels;
+
+        if (pixels > limit)
+        {
+            throw new InvalidDataException(
+                $"'{source}' decodes to {decodedWidth}x{decodedHeight}, {pixels} pixels, over the " +
+                $"{limit} pixel limit in {nameof(ImageLoader)}.{nameof(MaxDecodedPixels)}.");
+        }
     }
 
     private static void Prune()

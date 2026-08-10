@@ -162,7 +162,9 @@ Setting `AspectRatio` removes the reflow that happens when the real ratio arrive
 
 `State` reports `None`, `Loading`, `Loaded`, or `Failed`, and is bindable. A failure also raises `ImageFailed` with the exception — the library never writes to a log of yours, so that event is the only place the reason exists. `Placeholder` is whatever should occupy the tile until the picture is there.
 
-`http`, `https`, `file`, `pack`, and `application` URIs work, and a relative URI resolves against the element's base URI the way it does on `Image`. Remote pictures go through `Celeste.Wpf.Media.ImageLoader`, whose `HttpClient` you can replace at startup with one that carries your handler, proxy, or authentication. Encoded sources over `ImageLoader.MaxSourceBytes` (32 MiB) are refused rather than decoded.
+`http`, `https`, `file`, and `pack` URIs work, and a relative URI resolves against the element's base URI the way it does on `Image` — so `Assets/cover.png` behaves as you would expect. A resource compiled into an assembly is `pack://application:,,,/Assembly;component/path`.
+
+Remote pictures go through `Celeste.Wpf.Media.ImageLoader`, whose `HttpClient` you can replace at startup with one that carries your handler, proxy, or authentication. Two limits are applied before any memory is committed to pixels: `MaxSourceBytes` (32 MiB) bounds the file, and `MaxDecodedPixels` (64 million, about 244 MiB of pixel data) bounds what the file expands into. They are different numbers for a reason — a few hundred kilobytes of compressed data can describe an image tens of thousands of pixels on a side.
 
 ### Avatars
 

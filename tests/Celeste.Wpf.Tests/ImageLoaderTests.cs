@@ -27,6 +27,21 @@ public class ImageLoaderTests
         Assert.Throws<NotSupportedException>(() => Load(new Uri("ftp://example.invalid/picture.png")));
     }
 
+    /// <summary>
+    /// <c>application:</c> parses as a URI scheme, which makes it look like one WPF resolves. It is
+    /// not: WPF understands the word only as the authority of a pack URI, and
+    /// <c>Application.GetResourceStream</c> rejects the bare scheme. Refusing it with a message that
+    /// names the form that works beats accepting it and failing deeper down.
+    /// </summary>
+    [Fact]
+    public void TheBareApplicationSchemeIsRejectedAndPointsAtPack()
+    {
+        NotSupportedException failure = Assert.Throws<NotSupportedException>(
+            () => Load(new Uri("application:///Celeste.Gallery;component/Assets/tile-1.png")));
+
+        Assert.Contains("pack://application:,,,/", failure.Message, StringComparison.Ordinal);
+    }
+
     [Fact]
     public void TheSameSourceAtTheSameSizeIsDecodedOnce()
     {
@@ -79,6 +94,68 @@ public class ImageLoaderTests
             finally
             {
                 ImageLoader.MaxSourceBytes = original;
+                ImageLoader.ClearCache();
+            }
+        });
+    }
+
+    /// <summary>
+    /// The byte limit bounds the file; this one bounds what the file expands into. They are different
+    /// numbers, and only the second one stands between a small file describing a huge image and the
+    /// allocation that decoding it would ask for.
+    /// </summary>
+    [Fact]
+    public void AnImageThatDecodesToTooManyPixelsIsRejected()
+    {
+        StaTestHost.Run(() =>
+        {
+            long original = ImageLoader.MaxDecodedPixels;
+
+            try
+            {
+                // tile-2 is 320x480, so 1000 pixels is well under what it decodes to.
+                ImageLoader.MaxDecodedPixels = 1000;
+
+                // A cached picture is never decoded again, so the guard would never run. The gallery
+                // test realizes tiles at a width the loader reads as "full resolution", which is the
+                // same cache key this test uses.
+                ImageLoader.ClearCache();
+
+                InvalidDataException failure = Assert.Throws<InvalidDataException>(() => Load(new Uri(Present)));
+                Assert.Contains(nameof(ImageLoader.MaxDecodedPixels), failure.Message, StringComparison.Ordinal);
+            }
+            finally
+            {
+                ImageLoader.MaxDecodedPixels = original;
+                ImageLoader.ClearCache();
+            }
+        });
+    }
+
+    /// <summary>
+    /// The limit is about the decode, not the file: asking for a thumbnail of a large picture is a
+    /// small allocation and has to stay allowed.
+    /// </summary>
+    [Fact]
+    public void TheLimitIsJudgedAgainstTheSizeBeingDecoded()
+    {
+        StaTestHost.Run(() =>
+        {
+            long original = ImageLoader.MaxDecodedPixels;
+
+            try
+            {
+                // 320x480 whole is 153,600 pixels and would fail. Decoded to 20 wide it is 20x30.
+                ImageLoader.MaxDecodedPixels = 1000;
+                ImageLoader.ClearCache();
+
+                var thumbnail = (BitmapSource)Load(new Uri(Present), decodePixelWidth: 20);
+
+                Assert.Equal(20, thumbnail.PixelWidth);
+            }
+            finally
+            {
+                ImageLoader.MaxDecodedPixels = original;
                 ImageLoader.ClearCache();
             }
         });
