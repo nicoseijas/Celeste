@@ -13,4 +13,10 @@
     <ProjectReference Include="..\..\src\Celeste.Wpf\Celeste.Wpf.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Compiled into the assembly, so the Media tab reaches them through pack URIs and the tests
+         never need a file on disk or a network. -->
+    <Resource Include="Assets\*.png" />
+  </ItemGroup>
+
 </Project>

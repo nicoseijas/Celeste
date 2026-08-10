@@ -17,6 +17,7 @@
         <ResourceDictionary Source="pack://application:,,,/Celeste.Wpf;component/Themes/Controls/Badge.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Celeste.Wpf;component/Themes/Controls/ToggleSwitch.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Celeste.Wpf;component/Themes/Controls/ProgressRing.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Celeste.Wpf;component/Themes/Controls/Images.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Celeste.Wpf;component/Themes/Controls/Sidebar.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Celeste.Wpf;component/Themes/Controls/NavigationHost.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Celeste.Wpf;component/Themes/Controls/SidebarHost.xaml" />

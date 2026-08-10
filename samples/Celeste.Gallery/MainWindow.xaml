@@ -723,6 +723,169 @@
                 </ScrollViewer>
             </TabItem>
 
+            <!--  ===========  Media  ===========  -->
+            <TabItem Header="Media">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <celeste:Card Header="Avatars"
+                                      Description="Initials are the fallback: no picture yet, no picture set, or a picture that failed all look the same to the reader.">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <celeste:Avatar Margin="0,0,12,0"
+                                                    Initials="NS"
+                                                    Size="Small"
+                                                    Source="Assets/person.png" />
+                                    <celeste:Avatar Margin="0,0,12,0"
+                                                    Initials="NS"
+                                                    Source="Assets/person.png" />
+                                    <celeste:Avatar Margin="0,0,24,0"
+                                                    Initials="NS"
+                                                    Size="Large"
+                                                    Source="Assets/person.png" />
+
+                                    <celeste:Avatar Margin="0,0,12,0" Initials="AB" />
+                                    <celeste:Avatar Margin="0,0,12,0"
+                                                    Initials="李"
+                                                    Size="Large" />
+                                    <!--  A source that cannot resolve, to show the fallback rather than an empty circle.  -->
+                                    <celeste:Avatar Margin="0,0,12,0"
+                                                    Initials="MK"
+                                                    Source="Assets/does-not-exist.png" />
+                                    <celeste:Avatar Initials="DZ" IsEnabled="False" />
+                                </StackPanel>
+
+                                <TextBlock Margin="0,14,0,0"
+                                           Style="{StaticResource Celeste.TextBlock.Muted}"
+                                           Text="Celeste does not shorten a name into initials for you. Which letters stand for a person depends on their language and their name order, and a two-letter rule that works in one script mangles another."
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0"
+                                      Header="ImageView"
+                                      Description="A picture from a URI, decoded off the UI thread at the width it is shown at.">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel Margin="0,0,16,0">
+                                        <celeste:ImageView Width="170"
+                                                           Height="115"
+                                                           Source="Assets/tile-4.png" />
+                                        <TextBlock Margin="0,6,0,0"
+                                                   Style="{StaticResource Celeste.TextBlock.Caption}"
+                                                   Text="LOADED" />
+                                    </StackPanel>
+
+                                    <StackPanel Margin="0,0,16,0">
+                                        <celeste:ImageView Width="170"
+                                                           Height="115"
+                                                           Source="Assets/nothing-here.png" />
+                                        <TextBlock Margin="0,6,0,0"
+                                                   Style="{StaticResource Celeste.TextBlock.Caption}"
+                                                   Text="FAILED" />
+                                    </StackPanel>
+
+                                    <StackPanel>
+                                        <celeste:ImageView Width="170" Height="115">
+                                            <celeste:ImageView.Placeholder>
+                                                <celeste:ProgressRing />
+                                            </celeste:ImageView.Placeholder>
+                                        </celeste:ImageView>
+                                        <TextBlock Margin="0,6,0,0"
+                                                   Style="{StaticResource Celeste.TextBlock.Caption}"
+                                                   Text="NO SOURCE, OWN PLACEHOLDER" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <TextBlock Margin="0,18,0,8"
+                                           Style="{StaticResource Celeste.TextBlock.Strong}"
+                                           Text="Stretch, in a box that is not the picture's shape" />
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel Margin="0,0,16,0">
+                                        <celeste:ImageView Width="150"
+                                                           Height="150"
+                                                           Source="Assets/tile-4.png"
+                                                           Stretch="UniformToFill" />
+                                        <TextBlock Margin="0,6,0,0"
+                                                   Style="{StaticResource Celeste.TextBlock.Caption}"
+                                                   Text="UNIFORMTOFILL — CROPS" />
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,16,0">
+                                        <celeste:ImageView Width="150"
+                                                           Height="150"
+                                                           Source="Assets/tile-4.png"
+                                                           Stretch="Uniform" />
+                                        <TextBlock Margin="0,6,0,0"
+                                                   Style="{StaticResource Celeste.TextBlock.Caption}"
+                                                   Text="UNIFORM — LETTERBOXES" />
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <celeste:ImageView Width="150"
+                                                           Height="150"
+                                                           Source="Assets/tile-4.png"
+                                                           Stretch="Fill" />
+                                        <TextBlock Margin="0,6,0,0"
+                                                   Style="{StaticResource Celeste.TextBlock.Caption}"
+                                                   Text="FILL — DISTORTS" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </celeste:Card>
+
+                        <celeste:Card Margin="0,16,0,0"
+                                      Header="Masonry"
+                                      Description="Every tile goes into the column that is shortest at the time. The numbers are the order they are declared in — which is not the order you read them in, and that is the trade.">
+                            <StackPanel>
+                                <StackPanel Margin="0,0,0,14" Orientation="Horizontal">
+                                    <TextBlock VerticalAlignment="Center"
+                                               Style="{StaticResource Celeste.TextBlock.Muted}"
+                                               Text="Available width" />
+                                    <Slider x:Name="MasonryWidth"
+                                            Width="240"
+                                            Margin="12,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Maximum="900"
+                                            Minimum="260"
+                                            Value="900" />
+                                    <TextBlock Margin="16,0,0,0"
+                                               VerticalAlignment="Center"
+                                               Style="{StaticResource Celeste.TextBlock.Muted}"
+                                               Text="MinColumnWidth is 200, so the column count follows the width." />
+                                </StackPanel>
+
+                                <!--  The panel sizes itself from the width it is given; the border is only there to show where that ends.  -->
+                                <Border Width="{Binding Value, ElementName=MasonryWidth}"
+                                        Padding="12"
+                                        HorizontalAlignment="Left"
+                                        BorderBrush="{DynamicResource Celeste.Brush.Border}"
+                                        BorderThickness="1"
+                                        CornerRadius="{DynamicResource Celeste.Radius.Md}">
+                                    <celeste:MasonryPanel ColumnSpacing="12"
+                                                          MinColumnWidth="200"
+                                                          RowSpacing="12">
+                                        <celeste:ImageView Source="Assets/tile-1.png" />
+                                        <celeste:ImageView Source="Assets/tile-2.png" />
+                                        <celeste:ImageView Source="Assets/tile-3.png" />
+                                        <celeste:ImageView Source="Assets/tile-4.png" />
+
+                                        <!--  Not an image: the panel arranges whatever decides its own height.  -->
+                                        <celeste:Card Header="Any content" Elevation="Low">
+                                            <TextBlock Style="{StaticResource Celeste.TextBlock.Muted}"
+                                                       Text="A masonry column is a column. Anything that measures to a height of its own belongs in one."
+                                                       TextWrapping="Wrap" />
+                                        </celeste:Card>
+
+                                        <celeste:ImageView Source="Assets/tile-5.png" />
+                                        <celeste:ImageView Source="Assets/tile-6.png" />
+                                        <celeste:ImageView Source="Assets/tile-7.png" />
+                                        <celeste:ImageView Source="Assets/tile-8.png" />
+                                    </celeste:MasonryPanel>
+                                </Border>
+                            </StackPanel>
+                        </celeste:Card>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
         </TabControl>
     </Grid>
 </Window>

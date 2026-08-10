@@ -1,0 +1,194 @@
+<!--
+    Celeste — pictures.
+
+    Rounded corners come from an ImageBrush filling a rounded Border, not from clipping. A Border
+    does not clip its child to its corner radius, so an <Image> inside one keeps square corners
+    poking out; the background of a rounded Border is drawn as the rounded geometry itself.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Celeste.Wpf.Controls">
+
+    <Style x:Key="Celeste.ImageView" TargetType="{x:Type controls:ImageView}">
+        <Setter Property="controls:ControlHelper.CornerRadius" Value="{DynamicResource Celeste.Radius.Md}" />
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.SurfaceSunken}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Celeste.Brush.Border}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.MutedForeground}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:ImageView}">
+                    <Grid>
+                        <!--  Reserved space: what the tile looks like before there is a picture.  -->
+                        <Border x:Name="Surface"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(controls:ControlHelper.CornerRadius)}"
+                                SnapsToDevicePixels="True" />
+
+                        <ContentPresenter x:Name="PlaceholderHost"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          Content="{TemplateBinding Placeholder}" />
+
+                        <!--  Stroked in Foreground, so a host with its own fallback silences it with Foreground="Transparent".  -->
+                        <Path x:Name="FailedGlyph"
+                              Width="22"
+                              Height="22"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Data="M1.5,3.5 H20.5 V18.5 H1.5 Z M1.5,15 L7,10 L11.5,15 M12,12.5 L15.5,9.5 L20.5,14 M3,20.5 L19,1.5"
+                              Stroke="{TemplateBinding Foreground}"
+                              StrokeEndLineCap="Round"
+                              StrokeStartLineCap="Round"
+                              StrokeThickness="1.3"
+                              Visibility="Collapsed" />
+
+                        <Border x:Name="Picture"
+                                CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(controls:ControlHelper.CornerRadius)}"
+                                Opacity="0"
+                                SnapsToDevicePixels="True">
+                            <Border.Background>
+                                <ImageBrush ImageSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DecodedImage}" Stretch="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Stretch}" />
+                            </Border.Background>
+                        </Border>
+
+                        <!--  Last, so the outline stays crisp over the picture's edge.  -->
+                        <Border x:Name="Frame"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(controls:ControlHelper.CornerRadius)}"
+                                SnapsToDevicePixels="True" />
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="State" Value="Loaded">
+                            <Setter TargetName="Picture" Property="Opacity" Value="1" />
+                            <Setter TargetName="PlaceholderHost" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="State" Value="Failed">
+                            <Setter TargetName="FailedGlyph" Property="Visibility" Value="Visible" />
+                        </Trigger>
+
+                        <!--
+                            The fade is what keeps a grid of tiles from popping in. It is an
+                            EnterAction rather than the trigger itself, so the setter above still
+                            shows the picture when the user has animations turned off. The setting is
+                            read once, at parse time, which is as often as a user changes it.
+                        -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=State}" Value="Loaded" />
+                                <Condition Binding="{Binding Source={x:Static SystemParameters.ClientAreaAnimation}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <!--  Matches Celeste.Duration.Normal; a Storyboard cannot take a DynamicResource.  -->
+                                        <DoubleAnimation Storyboard.TargetName="Picture"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         From="0"
+                                                         To="1"
+                                                         Duration="0:0:0.25"
+                                                         FillBehavior="Stop" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </MultiDataTrigger.EnterActions>
+                        </MultiDataTrigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Picture" Property="Opacity" Value="0.4" />
+                            <Setter TargetName="Frame" Property="BorderBrush" Value="{DynamicResource Celeste.Brush.DisabledBorder}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource Celeste.ImageView}" TargetType="{x:Type controls:ImageView}" />
+
+    <Style x:Key="Celeste.Avatar" TargetType="{x:Type controls:Avatar}">
+        <Setter Property="Background" Value="{DynamicResource Celeste.Brush.Accent}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontFamily" Value="{DynamicResource Celeste.FontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Body}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.AccentForeground}" />
+        <Setter Property="Height" Value="{DynamicResource Celeste.Avatar.SizeMd}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Width" Value="{DynamicResource Celeste.Avatar.SizeMd}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:Avatar}">
+                    <Grid>
+                        <Border x:Name="Surface"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="{DynamicResource Celeste.Radius.Pill}"
+                                SnapsToDevicePixels="True" />
+
+                        <TextBlock x:Name="InitialsText"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontFamily="{TemplateBinding FontFamily}"
+                                   FontSize="{TemplateBinding FontSize}"
+                                   FontWeight="{TemplateBinding FontWeight}"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   Text="{TemplateBinding Initials}" />
+
+                        <!--
+                            Transparent Foreground: the initials underneath are this control's
+                            fallback, so the view must not draw its own failure glyph over them.
+                        -->
+                        <controls:ImageView x:Name="Picture"
+                                            controls:ControlHelper.CornerRadius="{DynamicResource Celeste.Radius.Pill}"
+                                            AspectRatio="1"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Foreground="Transparent"
+                                            Source="{TemplateBinding Source}"
+                                            Stretch="UniformToFill" />
+
+                        <Border x:Name="Ring"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{DynamicResource Celeste.Radius.Pill}"
+                                SnapsToDevicePixels="True" />
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <!--  The initials are what the picture replaces, and only once it is really there.  -->
+                        <DataTrigger Binding="{Binding State, ElementName=Picture}" Value="Loaded">
+                            <Setter TargetName="InitialsText" Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Surface" Property="Background" Value="{DynamicResource Celeste.Brush.Disabled}" />
+                            <Setter TargetName="InitialsText" Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
+                            <Setter TargetName="Picture" Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="Size" Value="Small">
+                <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.Caption}" />
+                <Setter Property="Height" Value="{DynamicResource Celeste.Avatar.SizeSm}" />
+                <Setter Property="Width" Value="{DynamicResource Celeste.Avatar.SizeSm}" />
+            </Trigger>
+            <Trigger Property="Size" Value="Large">
+                <Setter Property="FontSize" Value="{DynamicResource Celeste.FontSize.BodyLarge}" />
+                <Setter Property="Height" Value="{DynamicResource Celeste.Avatar.SizeLg}" />
+                <Setter Property="Width" Value="{DynamicResource Celeste.Avatar.SizeLg}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style BasedOn="{StaticResource Celeste.Avatar}" TargetType="{x:Type controls:Avatar}" />
+
+</ResourceDictionary>
