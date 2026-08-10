@@ -108,6 +108,53 @@ Named in the README as the most jarring gap. Each is a restyle of a built-in con
 
 ---
 
+## 0.6 — Pictures
+
+Applications that show images end up writing the same three things by hand: a control that loads a URI without blocking the UI thread, a round portrait with a fallback, and a layout that tolerates images of different shapes.
+
+### ✅ `ImageView`
+
+A picture from a URI, loaded and decoded on a background thread and shared between the views that need it.
+
+- Decoded to the width the control was laid out at, not the file's full resolution, and never upscaled by the decoder. A grid of thumbnails costs thumbnails.
+- One load per URI and width, however many views ask for it. Results are cached through weak references, so a picture is shared while something holds it and collected when nothing does.
+- `State` — `None`, `Loading`, `Loaded`, `Failed` — is bindable, and a failure raises `ImageFailed` with the exception rather than being swallowed. Celeste writes to no log of yours.
+- Sized by its layout: the width comes from the parent and the height from `AspectRatio`, or the picture's own ratio once known, with a square reserved until then. This is what makes a tile usable in a column whose height nothing else can predict.
+- Corner radius clips the picture properly, which a `Border` around an `Image` does not do.
+- `http`, `https`, `file`, `pack`, and `application`, with relative URIs resolved against the element's base URI. `ImageLoader.HttpClient` is replaceable, and `MaxSourceBytes` refuses an oversized response before it is decoded.
+
+Still open: the decode width is read once, at the first layout, so a view that grows keeps the bitmap it decoded. Nothing is cached across a session — the weak cache removes duplicate decodes, not duplicate downloads. A superseded load is abandoned rather than cancelled, because the download may be another view's too. There is no automation peer, and no animated-format support beyond the first frame.
+
+### ✅ `Avatar`
+
+A round portrait with initials standing in whenever there is no picture — none set, still loading, or a URI that failed.
+
+- `Small`, `Medium`, `Large` from tokens, overridable with an explicit `Width` and `Height`.
+- The picture goes through `ImageView`, so a broken URI degrades to the initials instead of an empty circle.
+- Initials are rendered as given. Celeste does not abbreviate a name into them: which letters stand for a person depends on their language and their name order.
+
+Still open: no presence or status dot, and no grouped "stack of avatars" presentation.
+
+### ✅ `MasonryPanel`
+
+A panel that puts each child into whichever column is shortest, so tiles of unequal height leave no ragged gap.
+
+- Column count derived from the panel's width and `MinColumnWidth`, or fixed with `Columns`. A resize reflows.
+- Any content, not only pictures: anything that measures to a height of its own belongs in a column.
+- `ColumnSpacing` and `RowSpacing` default to the `Celeste.Space.Md` value. A panel has no template, so it cannot read the token itself.
+
+Still open, and stated plainly because both are the kind of thing found the hard way: shortest-column placement changes reading order, and nothing here virtualizes. It is right for the tens of tiles a gallery view shows and wrong for thousands. A virtualizing variant is a different control, not a flag on this one.
+
+### 🧭 Icons and vector content
+
+Not an icon set — that stays out of scope. What is missing is the plumbing: a control that takes vector content and follows the foreground and size of what it sits in, so `IconContent` stops being a raw `Path` with a hand-written style.
+
+### 💭 A lightbox
+
+Opening a tile into a full-window view, with the zoom and pan that implies. It belongs with dialogs in 0.5 rather than here.
+
+---
+
 ## Cross-cutting, ongoing
 
 These are not milestones. They apply to everything above.

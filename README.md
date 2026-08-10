@@ -6,7 +6,7 @@ Celeste is a UI library for WPF applications that need to look current without a
 
 - **Light and dark themes** built from the same token names, switchable while the app runs. `ThemeManager.Apply(ApplicationTheme.System)` follows the Windows app theme and keeps following it.
 - **Restyled built-in controls**: `Button`, `TextBox`, `PasswordBox`, `CheckBox`, `RadioButton`, `ComboBox`, `ListBox`, `TabControl`, `Slider`, `ProgressBar`, `ScrollBar`, `ToolTip`, `Label`, `Separator`.
-- **Controls WPF does not have**: `Card`, `Badge`, `ToggleSwitch`, `ProgressRing`, and a `Sidebar` that collapses to an icon rail or slides in over the content.
+- **Controls WPF does not have**: `Card`, `Badge`, `ToggleSwitch`, `ProgressRing`, `Avatar`, an `ImageView` that loads and decodes pictures off the UI thread, a `MasonryPanel` that fills the shortest column, and a `Sidebar` that collapses to an icon rail or slides in over the content.
 - **Button variants** — primary, secondary, destructive, outline, ghost, link — that all share one `ControlTemplate`. Defining a new variant means setting three brushes, not copying a template.
 - **A type scale** and layout tokens (spacing, radii, control heights) exposed as XAML resources, so your own controls can sit on the same grid as the library's.
 
@@ -148,6 +148,46 @@ Each page is put back where you left it. Going forward is a fresh look and start
 
 There is no forward stack and no transition between pages.
 
+## Pictures
+
+`ImageView` takes a URI and does the rest: the file is read and decoded on a background thread, at the width the control was laid out at rather than at full resolution, and the result is shared with every other view showing the same picture at the same size.
+
+```xml
+<celeste:ImageView Source="https://example.com/cover.jpg" AspectRatio="1.5" />
+```
+
+**It takes the width its layout gives it and derives its height from the aspect ratio** — `AspectRatio` when you set one, the picture's own once it is known, and a square until then. That is what lets it sit in a masonry column, where the width is the column and only the picture knows the height. For a picture that should be its own natural size, set `Width` and `Height`, or use a plain `Image`.
+
+Setting `AspectRatio` removes the reflow that happens when the real ratio arrives, so it is worth setting whenever you know the shape in advance. `Stretch` defaults to `UniformToFill`, which crops rather than distorts.
+
+`State` reports `None`, `Loading`, `Loaded`, or `Failed`, and is bindable. A failure also raises `ImageFailed` with the exception — the library never writes to a log of yours, so that event is the only place the reason exists. `Placeholder` is whatever should occupy the tile until the picture is there.
+
+`http`, `https`, `file`, `pack`, and `application` URIs work, and a relative URI resolves against the element's base URI the way it does on `Image`. Remote pictures go through `Celeste.Wpf.Media.ImageLoader`, whose `HttpClient` you can replace at startup with one that carries your handler, proxy, or authentication. Encoded sources over `ImageLoader.MaxSourceBytes` (32 MiB) are refused rather than decoded.
+
+### Avatars
+
+```xml
+<celeste:Avatar Source="{Binding PhotoUri}" Initials="NS" Size="Large" />
+```
+
+The initials are the fallback for every case where there is no picture: none set, still loading, or a URI that failed. Celeste will not derive them from a name — which letters stand for a person depends on their language and their name order, and a two-letter rule that reads well in one script mangles another. `Size` is `Small`, `Medium`, or `Large`; setting `Width` and `Height` overrides all three.
+
+### Masonry
+
+`MasonryPanel` puts each child into whichever column is shortest at the time, so tiles of unequal height leave no ragged gap.
+
+```xml
+<celeste:MasonryPanel MinColumnWidth="220" ColumnSpacing="12" RowSpacing="12">
+    <celeste:ImageView Source="one.jpg" />
+    <celeste:ImageView Source="two.jpg" />
+    <celeste:Card Header="Any content">…</celeste:Card>
+</celeste:MasonryPanel>
+```
+
+The column count comes from the panel's own width unless you set `Columns`: it fits as many `MinColumnWidth` columns as it can and shares what is left between them, so a resize reflows. Children are measured with an unconstrained height, so each has to decide its own — anything that stretches to fill instead measures to nothing.
+
+Two things to know before using it. **Shortest-column placement changes reading order**: the third tile can end up beside the first rather than under it, which is the point of the layout and the reason not to use it for content that has to be read in sequence. And **nothing here virtualizes**: every child is measured and arranged on every pass, which is right for the tens of tiles a gallery view shows and wrong for thousands.
+
 ## Theming it
 
 Colors are semantic, not literal. `Celeste.Brush.Primary` is "the brand action color", and the light and dark dictionaries define it differently. To recolor the library, override the tokens after merging Celeste:
@@ -177,7 +217,7 @@ For per-control tweaks without retemplating, `Celeste.Wpf.Controls.ControlHelper
 
 Alpha. The token names and the public control API are still open to change; treat `0.x` releases as breaking. What exists is covered by tests that apply every control's template in both themes on a real WPF dispatcher, so the styles load and measure — but they have not been through a wide range of real applications yet.
 
-Not covered yet: `Menu` / `ContextMenu`, `DataGrid`, `TreeView`, `Expander`, `Calendar` / `DatePicker`, and dialogs. Those controls keep their default WPF appearance in a Celeste application, which is visible and jarring. Contributions in that direction are the most useful ones right now. Navigation is the one area that is filled in: `Sidebar`, a `SidebarHost` that presents it docked, as a rail, or off-canvas, and a `NavigationHost` that holds pages and a back stack.
+Not covered yet: `Menu` / `ContextMenu`, `DataGrid`, `TreeView`, `Expander`, `Calendar` / `DatePicker`, and dialogs. Those controls keep their default WPF appearance in a Celeste application, which is visible and jarring. Contributions in that direction are the most useful ones right now. Two areas are filled in: navigation — `Sidebar`, a `SidebarHost` that presents it docked, as a rail, or off-canvas, and a `NavigationHost` that holds pages and a back stack — and pictures, with `ImageView`, `Avatar`, and `MasonryPanel`.
 
 [ROADMAP.md](ROADMAP.md) has the order those gaps are being closed in, plus what is deliberately out of scope.
 

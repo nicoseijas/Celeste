@@ -22,6 +22,7 @@ The gallery is the fastest way to see a change. Run it, switch the theme selecto
 | `src/Celeste.Wpf/Themes/Controls.xaml` | Merges every control dictionary. New files must be listed here. |
 | `src/Celeste.Wpf/Themes/Generic.xaml` | Default styles for custom controls only. |
 | `src/Celeste.Wpf/Controls/` | Custom control classes. |
+| `src/Celeste.Wpf/Media/` | Services behind a control rather than controls: `ImageLoader`. |
 | `src/Celeste.Wpf/Theming/` | `ThemeManager` and the dictionary types consumers merge. |
 
 ## Rules that are not negotiable
