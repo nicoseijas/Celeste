@@ -32,7 +32,12 @@
     <!--  Destructive action  -->
     <Color x:Key="Celeste.Color.Destructive">#FFF05252</Color>
     <Color x:Key="Celeste.Color.DestructiveHover">#FFF87171</Color>
-    <Color x:Key="Celeste.Color.DestructivePressed">#FFD03B3B</Color>
+    <!--
+        Pressed is darker than the base, as everywhere else, but only so far: the foreground on a
+        destructive button in this theme is nearly black, so darkening the background is what takes
+        the contrast down. At #D03B3B the pressed state read 4.06:1.
+    -->
+    <Color x:Key="Celeste.Color.DestructivePressed">#FFDC4C4C</Color>
     <Color x:Key="Celeste.Color.DestructiveForeground">#FF1A0707</Color>
 
     <!--  Status  -->

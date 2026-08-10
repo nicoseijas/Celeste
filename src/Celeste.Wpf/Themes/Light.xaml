@@ -37,17 +37,27 @@
     <Color x:Key="Celeste.Color.DestructivePressed">#FFA11919</Color>
     <Color x:Key="Celeste.Color.DestructiveForeground">#FFFFFFFF</Color>
 
-    <!--  Status  -->
-    <Color x:Key="Celeste.Color.Success">#FF16A34A</Color>
+    <!--
+        Status. Darker than the mid-tone greens and ambers they started as: these are badge
+        backgrounds carrying white text at 11px, and a 3.3:1 badge is a badge some people cannot
+        read. ContrastTests holds them above 4.5:1.
+    -->
+    <Color x:Key="Celeste.Color.Success">#FF15803D</Color>
     <Color x:Key="Celeste.Color.SuccessForeground">#FFFFFFFF</Color>
-    <Color x:Key="Celeste.Color.Warning">#FFD97706</Color>
+    <Color x:Key="Celeste.Color.Warning">#FFB45309</Color>
     <Color x:Key="Celeste.Color.WarningForeground">#FFFFFFFF</Color>
 
     <!--  Subtle emphasis: hover backgrounds, selected rows, tinted badges  -->
     <Color x:Key="Celeste.Color.Accent">#FFE8F0FE</Color>
     <Color x:Key="Celeste.Color.AccentForeground">#FF1B4FB0</Color>
     <Color x:Key="Celeste.Color.Muted">#FFF1F3F7</Color>
-    <Color x:Key="Celeste.Color.MutedForeground">#FF64748B</Color>
+
+    <!--
+        Muted text has to stay readable on the three surfaces it lands on — white, Muted, and
+        SurfaceSunken — and Muted is the darkest of them, so it sets the floor. Dark enough to clear
+        4.5:1 there and no darker, because text that stops looking secondary stops doing its job.
+    -->
+    <Color x:Key="Celeste.Color.MutedForeground">#FF5E6A7D</Color>
 
     <!--  Lines and inputs  -->
     <Color x:Key="Celeste.Color.Border">#FFE2E5EB</Color>
