@@ -161,10 +161,14 @@ These are not milestones. They apply to everything above.
 
 ### Accessibility
 
-- Automation peers and names on every custom control.
-- Respect the Windows "show animations" and "reduce transparency" settings. A motion token set that resolves to zero duration is the mechanism.
-- High-contrast theme support. Today a high-contrast user gets Celeste's colors, which is the wrong answer; the fix is a third theme dictionary selected from the system setting, not per-control triggers.
-- Contrast audit of both theme dictionaries against WCAG AA, enforced by a test over the token pairs the styles actually use together.
+- ✅ **Automation peers on every custom control.** Each reports a control type, and a name where it has one to give — a card's header, a badge's content, an avatar's initials. A picture is left unnamed rather than named after its file, so a missing alternative text stays visible as one. `ToggleSwitch` says "switch" instead of "toggle button". `AutomationPeerTests` fails if a control loses its peer.
+- ✅ **Contrast against WCAG AA, enforced by a test.** `ContrastTests` computes the ratio for every token pair the styles put together as background and text, in both themes, and holds it above 4.5:1. Four pairs failed when it was first run and were corrected.
+- ✅ **A visible focus indicator wherever the system one is suppressed.** Every Celeste style turns off the dotted focus rectangle, so `FocusVisualTests` focuses each control that owes a replacement and fails if there is no ring.
+- ✅ **The Windows "show animations" setting.** Every animation in the library checks it, including the ones that run from XAML.
+- 🧭 Non-text contrast (WCAG 1.4.11): the borders that identify an input, and the focus ring against its surroundings. Celeste does not meet 3:1 everywhere, and the contrast test says so rather than implying coverage.
+- 🧭 An open off-canvas pane is not announced as modal. Focus is trapped and returned, which is the behavioural half; UIA has no non-window way to express the rest.
+- 🧭 High-contrast theme support. Today a high-contrast user gets Celeste's colors, which is the wrong answer; the fix is a third theme dictionary selected from the system setting, not per-control triggers.
+- 🧭 The "reduce transparency" setting, once there is anything transparent to reduce.
 
 ### Theming
 
