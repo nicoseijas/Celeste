@@ -15,14 +15,22 @@
     Coverage policy, here rather than on a command line, so it is reviewable and the same locally as
     in CI: `dotnet test /p:CollectCoverage=true`.
 
-    The floors are a ratchet set just under what the suite currently reaches, not a target: they exist
-    to catch coverage falling out, and should be raised when it climbs. Only the library is measured;
-    the gallery is a sample, and counting it would flatter the number.
+    The floors are a tripwire for coverage falling out, not a target. They are set against the least
+    covered environment, which is CI and not a desktop, because a floor that fails on a green
+    codebase is worse than a floor set a little low.
+
+    Expect a developer machine to report about three points higher. Sidebar and SidebarHost guard
+    their animations with SystemParameters.ClientAreaAnimation, which is false on a runner with no
+    interactive session, so those paths never execute there — and no test can make them, since that
+    is a Windows setting and not an injectable one. Raise these numbers from a CI run, never from a
+    local one.
+
+    Only the library is measured; the gallery is a sample, and counting it would flatter the number.
   -->
   <PropertyGroup Label="Coverage">
     <CoverletOutputFormat>cobertura</CoverletOutputFormat>
     <Include>[Celeste.Wpf]*</Include>
-    <Threshold>88,73</Threshold>
+    <Threshold>86,70</Threshold>
     <ThresholdType>line,branch</ThresholdType>
     <ThresholdStat>total</ThresholdStat>
   </PropertyGroup>

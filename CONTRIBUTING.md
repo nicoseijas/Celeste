@@ -23,7 +23,9 @@ dotnet pack src/Celeste.Wpf/Celeste.Wpf.csproj -c Release -o artifacts
 ./eng/validate-package.ps1
 ```
 
-The coverage floors live in the test project rather than in a CI command line, and are a ratchet: set just under what the suite reaches, so they catch coverage falling out. Raise them when it climbs. Two areas sit below the rest on purpose — `SystemThemeWatcher`'s registry-failure path and `ThemeManager`'s reaction to a Windows theme change need either `InternalsVisibleTo` or a test that edits the developer's registry, and neither is worth it.
+The coverage floors live in the test project rather than in a CI command line. They are a tripwire for coverage falling out, not a target, and they are set against CI rather than against a desktop — **your machine will report about three points higher than the floors suggest**. `Sidebar` and `SidebarHost` guard their animations with `SystemParameters.ClientAreaAnimation`, which is false on a runner with no interactive session, so those paths never execute there and no test can make them. If you raise the floors, raise them from a CI run.
+
+Two areas sit below the rest on purpose: `SystemThemeWatcher`'s registry-failure path and `ThemeManager`'s reaction to a Windows theme change need either `InternalsVisibleTo` or a test that edits the developer's registry, and neither is worth it.
 
 The last command builds a throwaway WPF app outside the repository against the packed `.nupkg`, on both target frameworks. Run it after anything that changes what ships: a new `Themes/` file, a change to the `.csproj`, a new public type.
 

@@ -18,9 +18,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
 
@@ -36,14 +36,15 @@ jobs:
       - name: Build
         run: dotnet build --no-restore --configuration Release
 
-      # Runs twice, once per target framework the library ships. Coverage floors live in the test
-      # project so they are the same here as on a developer's machine.
+      # Runs twice, once per target framework the library ships. The coverage floors live in the test
+      # project and are set against this environment, which covers less than a desktop does: a runner
+      # has no interactive session, so the animation paths guarded by ClientAreaAnimation never run.
       - name: Test
         run: dotnet test --no-build --configuration Release --verbosity normal /p:CollectCoverage=true
 
       - name: Upload coverage
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage
           path: tests/Celeste.Wpf.Tests/coverage.*.cobertura.xml
@@ -59,7 +60,7 @@ jobs:
         shell: pwsh
         run: ./eng/validate-package.ps1 -WorkingDirectory "${{ runner.temp }}/package-validation"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: nupkg
           path: |
