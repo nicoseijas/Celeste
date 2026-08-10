@@ -76,6 +76,11 @@ public class NavigationHost : ContentControl
 
     // Keyed by reference: two pages that compare equal are still two places the user has been, and
     // a page rebuilt on every visit legitimately starts at the top.
+    //
+    // Never holds more than the back stack plus the page on screen. An entry arrives with a push,
+    // and leaves when its page falls off the bottom of the stack or is left behind by going back.
+    // That bound is what makes MaxBackStackDepth a bound on retained pages rather than only on the
+    // length of a list.
     private readonly Dictionary<object, ScrollOffset> _scrollOffsets = new(ReferenceEqualityComparer.Instance);
 
     private ScrollViewer? _scrollViewer;
@@ -149,7 +154,11 @@ public class NavigationHost : ContentControl
         object previous = _backStack[^1];
         _backStack.RemoveAt(_backStack.Count - 1);
 
-        RememberScrollOffset(Content);
+        // The page being left is not remembered, and anything remembered about it is dropped: there
+        // is no forward stack, so nothing can return to it, and reaching it again from a selection
+        // is forward navigation, which starts at the top. Keeping its offset would be keeping the
+        // page itself, which is how the host would hold every page a long session ever showed.
+        Forget(Content, keeping: previous);
 
         _isGoingBack = true;
         try
@@ -252,6 +261,18 @@ public class NavigationHost : ContentControl
 
         // CanGoBack drives BrowseBack's CanExecute, and nothing else tells the command manager.
         CommandManager.InvalidateRequerySuggested();
+    }
+
+    /// <summary>
+    /// Drops what was remembered about <paramref name="page"/>, unless it is the page being returned
+    /// to — the stack top is never the current content, but a caller should not have to rely on it.
+    /// </summary>
+    private void Forget(object? page, object keeping)
+    {
+        if (page is not null && !ReferenceEquals(page, keeping))
+        {
+            _scrollOffsets.Remove(page);
+        }
     }
 
     private void RememberScrollOffset(object? page)

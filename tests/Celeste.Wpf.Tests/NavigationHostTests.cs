@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -214,6 +215,74 @@ public class NavigationHostTests
             Assert.Same(first, host.Content);
             Assert.Equal(300, scroller.VerticalOffset);
         });
+    }
+
+    /// <summary>
+    /// <see cref="NavigationHost.MaxBackStackDepth"/> has to bound the pages the host holds, not only
+    /// the length of a list. Nothing can return to a page left behind by going back — there is no
+    /// forward stack, and reaching it again from a selection starts at the top — so remembering where
+    /// it was scrolled to would keep the page, and its whole visual tree, for as long as the host.
+    /// </summary>
+    [Fact]
+    public void GoingBackDoesNotHoldOnToThePagesItLeaves()
+    {
+        StaTestHost.Run(() =>
+        {
+            var host = new NavigationHost { Padding = new Thickness(0) };
+            Realize(host);
+
+            var first = new Border { Height = 2000, Width = 100 };
+            host.Content = first;
+            Realize(host);
+
+            (WeakReference second, WeakReference third) = VisitTwoMorePages(host);
+
+            GoBackAndSettle(host);
+            GoBackAndSettle(host);
+
+            Assert.Same(first, host.Content);
+            Assert.Equal(0, host.BackStackDepth);
+
+            Collect();
+
+            Assert.False(second.IsAlive, "The host is still holding the second page.");
+            Assert.False(third.IsAlive, "The host is still holding the third page.");
+        });
+    }
+
+    /// <summary>
+    /// Its own method so that the pages it visits have no local variable left pointing at them when
+    /// it returns, which would keep them alive whatever the host does.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static (WeakReference Second, WeakReference Third) VisitTwoMorePages(NavigationHost host)
+    {
+        var second = new Border { Height = 2000, Width = 100 };
+        host.Content = second;
+        Realize(host);
+
+        // Somewhere other than the top, so the host has a position worth remembering for it.
+        ScrollViewerOf(host).ScrollToVerticalOffset(200);
+        Realize(host);
+
+        var third = new Border { Height = 2000, Width = 100 };
+        host.Content = third;
+        Realize(host);
+
+        return (new WeakReference(second), new WeakReference(third));
+    }
+
+    private static void Collect()
+    {
+        // The deferred scroll restore captures the page it is restoring, so the dispatcher queue has
+        // to drain before anything the host let go of is actually unreachable.
+        Dispatcher.CurrentDispatcher.Invoke(static () => { }, DispatcherPriority.SystemIdle);
+
+        for (int attempt = 0; attempt < 3; attempt++)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
     }
 
     private static void Realize(FrameworkElement element)
