@@ -8,6 +8,10 @@ using Xunit;
 
 namespace Celeste.Wpf.Tests;
 
+// The gallery targets net10.0-windows only, so it can only be referenced -- and realized -- from
+// that half of the matrix. A sample that has to be launched with -f is a worse sample.
+#if NET10_0_OR_GREATER
+
 /// <summary>
 /// Realizes every tab of the gallery. A tab whose content only fails when it is first selected —
 /// a resource the styles do not define, a template that cannot measure — surfaces here instead of
@@ -111,3 +115,4 @@ public class GalleryTests
             theme);
     }
 }
+#endif

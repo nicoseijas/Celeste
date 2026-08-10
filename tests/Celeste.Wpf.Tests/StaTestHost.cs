@@ -18,7 +18,8 @@ internal static class StaTestHost
     private static readonly TimeSpan PumpTimeout = TimeSpan.FromSeconds(10);
     private static readonly TimeSpan PollInterval = TimeSpan.FromMilliseconds(5);
 
-    private static readonly Lock Gate = new();
+    // object, not Lock: Lock arrived in .NET 9 and this assembly also targets net8.0-windows.
+    private static readonly object Gate = new();
     private static Dispatcher? _dispatcher;
     private static ThemesDictionary? _themes;
 

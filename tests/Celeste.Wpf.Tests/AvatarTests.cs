@@ -10,8 +10,8 @@ namespace Celeste.Wpf.Tests;
 /// </summary>
 public class AvatarTests
 {
-    private const string Present = "pack://application:,,,/Celeste.Gallery;component/Assets/person.png";
-    private const string Missing = "pack://application:,,,/Celeste.Gallery;component/Assets/not-a-file.png";
+    private const string Present = "pack://application:,,,/Celeste.Wpf.Tests;component/Assets/person.png";
+    private const string Missing = "pack://application:,,,/Celeste.Wpf.Tests;component/Assets/not-a-file.png";
 
     [Fact]
     public void TheInitialsShowWhenThereIsNoPicture()

@@ -1,23 +1,58 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <!-- Both frameworks the library ships. Compiling for net8.0-windows proved nothing about how it
+         behaves there: WPF's own behaviour differs between runtimes, and so does the BCL underneath
+         it. The suite runs twice. -->
+    <TargetFrameworks>net8.0-windows;net10.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <RootNamespace>Celeste.Wpf.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
+  <!--
+    Coverage policy, here rather than on a command line, so it is reviewable and the same locally as
+    in CI: `dotnet test /p:CollectCoverage=true`.
+
+    The floors are a ratchet set just under what the suite currently reaches, not a target: they exist
+    to catch coverage falling out, and should be raised when it climbs. Only the library is measured;
+    the gallery is a sample, and counting it would flatter the number.
+  -->
+  <PropertyGroup Label="Coverage">
+    <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+    <Include>[Celeste.Wpf]*</Include>
+    <Threshold>88,73</Threshold>
+    <ThresholdType>line,branch</ThresholdType>
+    <ThresholdStat>total</ThresholdStat>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.msbuild">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Celeste.Wpf\Celeste.Wpf.csproj" />
-    <!-- The gallery is the reference consumer: if a tab of it throws, the library shipped a bug. -->
-    <ProjectReference Include="..\..\samples\Celeste.Gallery\Celeste.Gallery.csproj" />
+
+    <!-- The gallery is the reference consumer: if a tab of it throws, the library shipped a bug. It
+         targets one framework, because a sample that has to be run with -f is a worse sample, so the
+         tests that realize it are compiled only where it can be referenced. -->
+    <ProjectReference Include="..\..\samples\Celeste.Gallery\Celeste.Gallery.csproj" Condition="'$(TargetFramework)' == 'net10.0-windows'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The gallery's own tiles, compiled into this assembly rather than copied: the picture tests
+         need a real image behind a pack URI, and taking it from the gallery would tie them to a
+         sample that only builds for one framework. -->
+    <Resource Include="..\..\samples\Celeste.Gallery\Assets\tile-1.png" Link="Assets\tile-1.png" />
+    <Resource Include="..\..\samples\Celeste.Gallery\Assets\tile-2.png" Link="Assets\tile-2.png" />
+    <Resource Include="..\..\samples\Celeste.Gallery\Assets\person.png" Link="Assets\person.png" />
   </ItemGroup>
 
 </Project>

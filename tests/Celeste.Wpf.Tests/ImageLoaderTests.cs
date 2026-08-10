@@ -11,7 +11,7 @@ namespace Celeste.Wpf.Tests;
 /// </summary>
 public class ImageLoaderTests
 {
-    private const string Present = "pack://application:,,,/Celeste.Gallery;component/Assets/tile-2.png";
+    private const string Present = "pack://application:,,,/Celeste.Wpf.Tests;component/Assets/tile-2.png";
 
     [Fact]
     public void ARelativeUriIsRejected()
@@ -37,7 +37,7 @@ public class ImageLoaderTests
     public void TheBareApplicationSchemeIsRejectedAndPointsAtPack()
     {
         NotSupportedException failure = Assert.Throws<NotSupportedException>(
-            () => Load(new Uri("application:///Celeste.Gallery;component/Assets/tile-1.png")));
+            () => Load(new Uri("application:///Celeste.Wpf.Tests;component/Assets/tile-1.png")));
 
         Assert.Contains("pack://application:,,,/", failure.Message, StringComparison.Ordinal);
     }
@@ -159,6 +159,21 @@ public class ImageLoaderTests
                 ImageLoader.ClearCache();
             }
         });
+    }
+
+    /// <summary>
+    /// Both limits are public and settable, and a limit of zero or less would mean refusing
+    /// everything. Saying so at the point of assignment beats every later load failing for no
+    /// apparent reason.
+    /// </summary>
+    [Fact]
+    public void TheLimitsRefuseAValueThatWouldRefuseEverything()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => ImageLoader.MaxSourceBytes = 0);
+        Assert.Throws<ArgumentOutOfRangeException>(() => ImageLoader.MaxSourceBytes = -1);
+        Assert.Throws<ArgumentOutOfRangeException>(() => ImageLoader.MaxDecodedPixels = 0);
+        Assert.Throws<ArgumentOutOfRangeException>(() => ImageLoader.MaxDecodedPixels = -1);
+        Assert.Throws<ArgumentNullException>(() => ImageLoader.HttpClient = null!);
     }
 
     /// <summary>

@@ -11,13 +11,14 @@ namespace Celeste.Wpf.Tests;
 /// an aspect ratio, and the fact that a picture is decoded to the size it is shown at.
 /// </summary>
 /// <remarks>
-/// The pictures are the gallery's own resources. The test project already references the gallery as
-/// the reference consumer, and a pack URI keeps every case here off the network and off the disk.
+/// The pictures are the gallery's tiles, compiled into this assembly rather than read from it, so a
+/// pack URI keeps every case here off the network and off the disk — and off a sample project that
+/// only builds for one of the two frameworks these tests run on.
 /// </remarks>
 public class ImageViewTests
 {
-    private const string Present = "pack://application:,,,/Celeste.Gallery;component/Assets/tile-1.png";
-    private const string Missing = "pack://application:,,,/Celeste.Gallery;component/Assets/not-a-file.png";
+    private const string Present = "pack://application:,,,/Celeste.Wpf.Tests;component/Assets/tile-1.png";
+    private const string Missing = "pack://application:,,,/Celeste.Wpf.Tests;component/Assets/not-a-file.png";
 
     /// <summary>The natural width of <see cref="Present"/>.</summary>
     private const int PresentPixelWidth = 480;
@@ -138,6 +139,56 @@ public class ImageViewTests
 
             Assert.Equal(240, view.DesiredSize.Width, 3);
             Assert.Equal(240, view.DesiredSize.Height, 3);
+        });
+    }
+
+    /// <summary>
+    /// An explicit decode width overrides the laid-out one, for a view whose eventual size the
+    /// application knows better than the first layout pass does.
+    /// </summary>
+    [Fact]
+    public void AnExplicitDecodeWidthIsUsedInsteadOfTheLayoutWidth()
+    {
+        StaTestHost.Run(() =>
+        {
+            var view = new ImageView { Width = 100, Height = 100, DecodeWidth = 40 };
+
+            InWindow(view, () =>
+            {
+                view.Source = new Uri(Present);
+                StaTestHost.PumpUntil(() => view.State != ImageState.Loading, "the picture never loaded");
+
+                var decoded = (BitmapSource)view.DecodedImage!;
+                Assert.Equal(40, decoded.PixelWidth);
+            });
+        });
+    }
+
+    /// <summary>
+    /// A source replaced before the first one finished: the abandoned load must not write its result,
+    /// or a failure the user never asked about would land on top of the picture they did.
+    /// </summary>
+    [Fact]
+    public void ASupersededLoadDoesNotReportItsOutcome()
+    {
+        StaTestHost.Run(() =>
+        {
+            var view = new ImageView { Width = 100, Height = 100 };
+            var failures = 0;
+            view.ImageFailed += (_, _) => failures++;
+
+            InWindow(view, () =>
+            {
+                // Both assignments happen before the dispatcher runs either continuation.
+                view.Source = new Uri(Missing);
+                view.Source = new Uri(Present);
+
+                StaTestHost.PumpUntil(() => view.State != ImageState.Loading, "neither load finished");
+
+                Assert.Equal(ImageState.Loaded, view.State);
+                Assert.NotNull(view.DecodedImage);
+                Assert.Equal(0, failures);
+            });
         });
     }
 
