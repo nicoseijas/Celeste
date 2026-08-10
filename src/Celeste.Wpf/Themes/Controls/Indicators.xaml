@@ -114,6 +114,20 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Slider}">
                     <Grid Background="Transparent">
+                        <!--
+                            Around the whole control rather than around the thumb. The thumb is not
+                            focusable — the Slider is — and the ring lives in the thumb's own
+                            template, out of reach of a trigger here. A ring on the control is also
+                            what the user is looking for: the arrow keys move the slider, not a knob.
+                        -->
+                        <Border x:Name="FocusRing"
+                                Margin="-3"
+                                BorderBrush="{DynamicResource Celeste.Brush.Ring}"
+                                BorderThickness="2"
+                                CornerRadius="{DynamicResource Celeste.Radius.Sm}"
+                                Opacity="0"
+                                SnapsToDevicePixels="True" />
+
                         <Border Height="4"
                                 VerticalAlignment="Center"
                                 Background="{TemplateBinding Background}"
@@ -145,6 +159,9 @@
                         </Track>
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="FocusRing" Property="Opacity" Value="1" />
+                        </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Fill" Property="Background" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
                         </Trigger>
