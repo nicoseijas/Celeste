@@ -15,6 +15,14 @@
     <Description>A modern, themeable UI library for WPF: semantic design tokens, light/dark themes, restyled native controls, and the controls WPF never shipped.</Description>
     <PackageTags>wpf;ui;xaml;theme;dark-mode;controls;design-system;dotnet</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!--
+      Checks the packed package rather than the compiled assemblies: that every target framework it
+      claims offers the same public API, and that nothing in lib is unreachable. Two frameworks built
+      from one source should agree, and the day they stop agreeing is the day a consumer on the other
+      one finds out.
+    -->
+    <EnablePackageValidation>true</EnablePackageValidation>
   </PropertyGroup>
 
   <ItemGroup>
