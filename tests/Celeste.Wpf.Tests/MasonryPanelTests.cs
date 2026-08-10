@@ -172,6 +172,26 @@ public class MasonryPanelTests
         });
     }
 
+    /// <summary>
+    /// A fixed column count the width cannot pay for: the gaps alone exceed it. The panel gives every
+    /// column nothing rather than a negative width, which is the difference between a squashed layout
+    /// and an exception.
+    /// </summary>
+    [Fact]
+    public void MoreColumnsThanFitDoNotProduceANegativeWidth()
+    {
+        StaTestHost.Run(() =>
+        {
+            MasonryPanel panel = Panel(Tiles(50, 3));
+            panel.Columns = 10;
+
+            Realize(panel, 100);
+
+            Assert.Equal(100, panel.DesiredSize.Width, 3);
+            Assert.All(panel.Children.Cast<UIElement>(), child => Assert.Equal(0, child.RenderSize.Width, 3));
+        });
+    }
+
     private static MasonryPanel Panel(IEnumerable<UIElement> children)
     {
         var panel = new MasonryPanel

@@ -85,6 +85,33 @@ public class AutomationPeerTests
         });
     }
 
+    /// <summary>
+    /// What the user actually hears the control called. A switch is not a toggle button and a
+    /// navigation list is not a list box, and the control type alone does not say so.
+    /// </summary>
+    [Theory]
+    [InlineData(nameof(ToggleSwitch), "switch")]
+    [InlineData(nameof(Sidebar), "navigation")]
+    public void ControlsWithATruerNameForThemselvesSayIt(string controlName, string expected)
+    {
+        StaTestHost.Run(() =>
+            Assert.Equal(expected, PeerFor(Create(controlName)).GetLocalizedControlType()));
+    }
+
+    /// <summary>
+    /// A card with no header and a badge with no content have nothing to fall back to, and an empty
+    /// name is the right answer -- better than a screen reader announcing the type twice.
+    /// </summary>
+    [Fact]
+    public void AControlWithNothingToSayIsUnnamed()
+    {
+        StaTestHost.Run(() =>
+        {
+            Assert.Empty(PeerFor(new Card { Content = "body" }).GetName());
+            Assert.Empty(PeerFor(new Badge()).GetName());
+        });
+    }
+
     private static AutomationPeer PeerFor(FrameworkElement element)
     {
         // Realized first: a peer reads properties off a control that has been through layout.
