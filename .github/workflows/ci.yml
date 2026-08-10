@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
 
+# Read-only by default. The job needs the checkout and nothing else, and a token that can write is a
+# token a compromised dependency can write with.
+permissions:
+  contents: read
+
 jobs:
   build:
     # WPF needs Windows: the library targets net8.0-windows and net10.0-windows,
@@ -21,6 +26,12 @@ jobs:
 
       - name: Restore
         run: dotnet restore
+
+      # .editorconfig is the authority on style, and an authority nothing checks is a suggestion.
+      # This catches the line endings and naming a build does not: IDE diagnostics are not compiler
+      # diagnostics, so TreatWarningsAsErrors never sees them.
+      - name: Verify formatting
+        run: dotnet format --verify-no-changes --no-restore
 
       - name: Build
         run: dotnet build --no-restore --configuration Release

@@ -2,7 +2,7 @@
 
 ## Getting set up
 
-You need Windows and the .NET 10 SDK. `global.json` pins the SDK feature band, so a mismatched install fails fast instead of building against the wrong toolchain.
+You need Windows and a .NET 10 SDK, 10.0.100 or newer. `global.json` asks for `10.0.100` with `rollForward: latestFeature`, which accepts any release SDK in that band or a later one and picks the highest installed — it does not pin you to a feature band, and prereleases are excluded. If a newer band ever starts failing the build, pin it then by moving to `latestPatch` with a base version you have installed; requiring one exact band up front only turns contributors away.
 
 ```powershell
 dotnet build
