@@ -34,8 +34,18 @@
                     </Grid>
 
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsActive" Value="True">
-                            <Trigger.EnterActions>
+                        <!--
+                            No spin for a user who has turned animations off in Windows: an
+                            indefinitely repeating one is exactly what that setting is about. The arc
+                            stays on screen, still saying the work has no known end, and the peer
+                            reports a progress bar to anything listening.
+                        -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsActive, RelativeSource={RelativeSource TemplatedParent}}" Value="True" />
+                                <Condition Binding="{Binding Source={x:Static SystemParameters.ClientAreaAnimation}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.EnterActions>
                                 <BeginStoryboard x:Name="SpinStoryboard">
                                     <Storyboard RepeatBehavior="Forever">
                                         <DoubleAnimation Storyboard.TargetName="Spin"
@@ -45,11 +55,11 @@
                                                          Duration="0:0:1.1" />
                                     </Storyboard>
                                 </BeginStoryboard>
-                            </Trigger.EnterActions>
-                            <Trigger.ExitActions>
+                            </MultiDataTrigger.EnterActions>
+                            <MultiDataTrigger.ExitActions>
                                 <StopStoryboard BeginStoryboardName="SpinStoryboard" />
-                            </Trigger.ExitActions>
-                        </Trigger>
+                            </MultiDataTrigger.ExitActions>
+                        </MultiDataTrigger>
                         <Trigger Property="IsActive" Value="False">
                             <Setter TargetName="Root" Property="Visibility" Value="Collapsed" />
                         </Trigger>

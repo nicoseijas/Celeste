@@ -56,8 +56,21 @@
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Track" Property="Background" Value="{DynamicResource Celeste.Brush.Primary}" />
                             <Setter TargetName="Thumb" Property="Margin" Value="21,0,0,0" />
-                            <!--  From is explicit: without it the animation starts from the Setter's value and nothing moves.  -->
-                            <Trigger.EnterActions>
+                        </Trigger>
+
+                        <!--
+                            The slide is the setter above made gradual, which is why it is a separate
+                            trigger: a user who has turned animations off in Windows still gets the
+                            switch moving, just without the travel. From is explicit because the
+                            setter has already applied the destination and there would be nothing left
+                            to animate from.
+                        -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="True" />
+                                <Condition Binding="{Binding Source={x:Static SystemParameters.ClientAreaAnimation}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.EnterActions>
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ThicknessAnimation Storyboard.TargetName="Thumb"
@@ -71,8 +84,8 @@
                                         </ThicknessAnimation>
                                     </Storyboard>
                                 </BeginStoryboard>
-                            </Trigger.EnterActions>
-                            <Trigger.ExitActions>
+                            </MultiDataTrigger.EnterActions>
+                            <MultiDataTrigger.ExitActions>
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ThicknessAnimation Storyboard.TargetName="Thumb"
@@ -86,8 +99,8 @@
                                         </ThicknessAnimation>
                                     </Storyboard>
                                 </BeginStoryboard>
-                            </Trigger.ExitActions>
-                        </Trigger>
+                            </MultiDataTrigger.ExitActions>
+                        </MultiDataTrigger>
 
                         <MultiTrigger>
                             <MultiTrigger.Conditions>

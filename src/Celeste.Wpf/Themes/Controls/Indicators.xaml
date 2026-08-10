@@ -42,7 +42,20 @@
                         <Trigger Property="IsIndeterminate" Value="True">
                             <Setter TargetName="PART_Indicator" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="Pulse" Property="Visibility" Value="Visible" />
-                            <Trigger.EnterActions>
+                        </Trigger>
+
+                        <!--
+                            The pulse is separate from the setters above, so that turning animations
+                            off in Windows leaves a filled track rather than an empty determinate bar
+                            reading zero. The bar still says the amount is unknown; it just stops
+                            breathing.
+                        -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsIndeterminate, RelativeSource={RelativeSource TemplatedParent}}" Value="True" />
+                                <Condition Binding="{Binding Source={x:Static SystemParameters.ClientAreaAnimation}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.EnterActions>
                                 <BeginStoryboard x:Name="PulseStoryboard">
                                     <Storyboard AutoReverse="True" RepeatBehavior="Forever">
                                         <DoubleAnimation Storyboard.TargetName="Pulse"
@@ -56,11 +69,11 @@
                                         </DoubleAnimation>
                                     </Storyboard>
                                 </BeginStoryboard>
-                            </Trigger.EnterActions>
-                            <Trigger.ExitActions>
+                            </MultiDataTrigger.EnterActions>
+                            <MultiDataTrigger.ExitActions>
                                 <StopStoryboard BeginStoryboardName="PulseStoryboard" />
-                            </Trigger.ExitActions>
-                        </Trigger>
+                            </MultiDataTrigger.ExitActions>
+                        </MultiDataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
