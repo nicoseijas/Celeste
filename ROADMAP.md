@@ -178,9 +178,12 @@ These are not milestones. They apply to everything above.
 
 ### Testing and tooling
 
+- ✅ **CI on Windows for both target frameworks.** The suite runs twice, once per framework the library ships, rather than compiling for `net8.0-windows` and only ever testing `net10.0-windows`. The package is packed, then restored into a WPF app built outside the repository and compiled against both frameworks, so what ships is exercised and not just produced.
+- ✅ **Coverage floors, enforced.** Set as a ratchet just under what the suite reaches, in the test project so they are the same locally as in CI. `SystemThemeWatcher`'s registry-failure path and `ThemeManager`'s reaction to a Windows theme change stay uncovered: reaching them needs `InternalsVisibleTo` or a test that edits the developer's registry.
+- ✅ **Formatting enforced.** `.editorconfig` is the authority and CI checks it, which compiler warnings-as-errors cannot do — IDE diagnostics are not compiler diagnostics.
 - 🧭 Extend `ControlTemplateTests` coverage as controls land; every new style needs its row.
-- 🧭 Visual regression snapshots of the gallery in both themes. Template-application tests prove a style loads, not that it looks right.
-- 🧭 CI on Windows for `net8.0-windows` and `net10.0-windows`, with the package built and validated on every push.
+- 🧭 Visual regression snapshots of the gallery in both themes. Template-application tests prove a style loads, not that it looks right. Nothing today catches a control that loads and looks wrong, which is why a change to a template still means running the gallery and looking at it.
+- 🧭 A UI-automation pass over the gallery, driving controls the way a user does. The automation peers are asserted; the interactions through them are not.
 
 ### Documentation
 

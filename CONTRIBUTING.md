@@ -12,15 +12,20 @@ dotnet run --project samples/Celeste.Gallery
 
 The gallery is the fastest way to see a change. Run it, switch the theme selector between System, Light, and Dark, and look at the control you touched in both themes before opening a pull request.
 
-CI also verifies formatting and that the package is usable, both of which you can run yourself:
+`dotnet test` runs the suite twice, once for each framework the library ships. The gallery targets `net10.0-windows` only, so the tests that realize it are compiled only there; everything else runs on both.
+
+CI also verifies formatting, coverage, and that the package is usable, all of which you can run yourself:
 
 ```powershell
 dotnet format --verify-no-changes
+dotnet test /p:CollectCoverage=true
 dotnet pack src/Celeste.Wpf/Celeste.Wpf.csproj -c Release -o artifacts
 ./eng/validate-package.ps1
 ```
 
-The last one builds a throwaway WPF app outside the repository against the packed `.nupkg`, on both target frameworks. Run it after anything that changes what ships: a new `Themes/` file, a change to the `.csproj`, a new public type. `net8.0-windows` is only ever compiled here, so that script is the one place it gets consumed.
+The coverage floors live in the test project rather than in a CI command line, and are a ratchet: set just under what the suite reaches, so they catch coverage falling out. Raise them when it climbs. Two areas sit below the rest on purpose — `SystemThemeWatcher`'s registry-failure path and `ThemeManager`'s reaction to a Windows theme change need either `InternalsVisibleTo` or a test that edits the developer's registry, and neither is worth it.
+
+The last command builds a throwaway WPF app outside the repository against the packed `.nupkg`, on both target frameworks. Run it after anything that changes what ships: a new `Themes/` file, a change to the `.csproj`, a new public type.
 
 ## Where things live
 

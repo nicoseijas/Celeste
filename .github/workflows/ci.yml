@@ -36,8 +36,17 @@ jobs:
       - name: Build
         run: dotnet build --no-restore --configuration Release
 
+      # Runs twice, once per target framework the library ships. Coverage floors live in the test
+      # project so they are the same here as on a developer's machine.
       - name: Test
-        run: dotnet test --no-build --configuration Release --verbosity normal
+        run: dotnet test --no-build --configuration Release --verbosity normal /p:CollectCoverage=true
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: tests/Celeste.Wpf.Tests/coverage.*.cobertura.xml
 
       - name: Pack
         run: dotnet pack src/Celeste.Wpf/Celeste.Wpf.csproj --no-build --configuration Release --output artifacts
