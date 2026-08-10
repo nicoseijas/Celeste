@@ -17,6 +17,7 @@ namespace Celeste.Wpf.Theming;
 public sealed class ThemesDictionary : ResourceDictionary
 {
     private ApplicationTheme _theme = ApplicationTheme.System;
+    private ApplicationTheme _resolvedTheme;
 
     /// <summary>
     /// Gets or sets the theme this dictionary provides. Defaults to <see cref="ApplicationTheme.System"/>.
@@ -31,6 +32,13 @@ public sealed class ThemesDictionary : ResourceDictionary
         }
     }
 
+    /// <summary>
+    /// The theme whose tokens are actually loaded, with <see cref="ApplicationTheme.System"/>
+    /// already resolved. This is what is painted, and <see cref="ThemeManager"/> reports it rather
+    /// than keeping a second copy that can drift from it.
+    /// </summary>
+    internal ApplicationTheme ResolvedTheme => _resolvedTheme;
+
     /// <summary>Initializes a new instance of the <see cref="ThemesDictionary"/> class.</summary>
     public ThemesDictionary() => SetSourceFor(_theme);
 
@@ -40,6 +48,7 @@ public sealed class ThemesDictionary : ResourceDictionary
             ? SystemThemeWatcher.GetCurrentTheme()
             : theme;
 
+        _resolvedTheme = resolved;
         Source = CelesteUi.PackUri($"Themes/{resolved}.xaml");
     }
 }

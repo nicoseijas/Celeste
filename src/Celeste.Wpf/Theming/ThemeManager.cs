@@ -14,6 +14,10 @@ public static class ThemeManager
 {
     private static ApplicationTheme _requestedTheme = ApplicationTheme.System;
 
+    // What ThemeChanged last reported. Seeded with what is painted before anyone applies anything,
+    // so applying the theme the application already has does not announce a change.
+    private static ApplicationTheme _announcedTheme = SystemThemeWatcher.GetCurrentTheme();
+
     /// <summary>
     /// Raised on the UI thread after the effective theme changes.
     /// </summary>
@@ -27,7 +31,14 @@ public static class ThemeManager
     /// <summary>
     /// Gets the theme currently painted, which is never <see cref="ApplicationTheme.System"/>.
     /// </summary>
-    public static ApplicationTheme CurrentTheme { get; private set; } = SystemThemeWatcher.GetCurrentTheme();
+    /// <remarks>
+    /// Read from the merged <see cref="ThemesDictionary"/> rather than from a field of this class.
+    /// The dictionary's own <see cref="ThemesDictionary.Theme"/> is writable, so a copy kept here
+    /// could report a theme other than the one on screen. Before a dictionary is merged there is
+    /// nothing painted yet, and this reports the Windows theme.
+    /// </remarks>
+    public static ApplicationTheme CurrentTheme =>
+        FindThemesDictionary()?.ResolvedTheme ?? SystemThemeWatcher.GetCurrentTheme();
 
     /// <summary>
     /// Applies <paramref name="theme"/> to the current application.
@@ -52,6 +63,9 @@ public static class ThemeManager
         else
         {
             SystemThemeWatcher.Changed -= OnSystemThemeChanged;
+
+            // Nothing else listens, so the watcher's own hook into SystemEvents can go too.
+            SystemThemeWatcher.Stop();
         }
 
         ApplyResolved(theme == ApplicationTheme.System ? SystemThemeWatcher.GetCurrentTheme() : theme);
@@ -64,21 +78,34 @@ public static class ThemeManager
                 "No ThemesDictionary was found in Application.Current.Resources. " +
                 "Merge <celeste:ThemesDictionary /> into App.xaml before calling ThemeManager.Apply.");
 
-        if (CurrentTheme == theme && dictionary.Source is not null)
+        // Compared against what the dictionary actually holds. Comparing against a theme recorded
+        // here would skip the assignment for a dictionary that had been pointed elsewhere directly,
+        // and leave this class reporting a theme the application is not painting.
+        if (dictionary.ResolvedTheme != theme)
+        {
+            dictionary.Theme = theme;
+        }
+        else if (_announcedTheme == theme)
         {
             return;
         }
 
-        dictionary.Theme = theme;
-        CurrentTheme = theme;
+        _announcedTheme = theme;
         ThemeChanged?.Invoke(null, new ThemeChangedEventArgs(theme));
     }
 
     private static void OnSystemThemeChanged(object? sender, EventArgs e)
     {
         // SystemEvents raises this on its own thread; resource dictionaries belong to the UI thread.
-        Application.Current?.Dispatcher.BeginInvoke(
-            () => ApplyResolved(SystemThemeWatcher.GetCurrentTheme()));
+        Application.Current?.Dispatcher.BeginInvoke(() =>
+        {
+            // The application may have pinned a theme between the notification and this callback
+            // running, and a queued Windows change must not overrule an explicit choice.
+            if (_requestedTheme == ApplicationTheme.System)
+            {
+                ApplyResolved(SystemThemeWatcher.GetCurrentTheme());
+            }
+        });
     }
 
     private static ThemesDictionary? FindThemesDictionary()
