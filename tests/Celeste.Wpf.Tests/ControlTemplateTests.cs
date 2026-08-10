@@ -37,6 +37,8 @@ public class ControlTemplateTests
         nameof(Badge),
         nameof(ToggleSwitch),
         nameof(ProgressRing),
+        nameof(ImageView),
+        nameof(Avatar),
         nameof(NavigationHost),
         nameof(Sidebar),
         nameof(SidebarHost),
@@ -159,6 +161,11 @@ public class ControlTemplateTests
         nameof(Badge) => new Badge { Content = "New" },
         nameof(ToggleSwitch) => new ToggleSwitch { Content = "Label" },
         nameof(ProgressRing) => new ProgressRing(),
+
+        // An aspect ratio rather than a source: the template has to measure without a picture, which
+        // is the state every tile starts in.
+        nameof(ImageView) => new ImageView { AspectRatio = 1.5 },
+        nameof(Avatar) => new Avatar { Initials = "NS" },
         nameof(NavigationHost) => new NavigationHost { Content = "body" },
         nameof(Sidebar) => new Sidebar
         {

@@ -15,7 +15,7 @@ namespace Celeste.Wpf.Tests;
 /// </summary>
 public class GalleryTests
 {
-    public static TheoryData<int> TabIndexes => new() { 0, 1, 2, 3, 4 };
+    public static TheoryData<int> TabIndexes => new() { 0, 1, 2, 3, 4, 5 };
 
     [Theory]
     [MemberData(nameof(TabIndexes))]

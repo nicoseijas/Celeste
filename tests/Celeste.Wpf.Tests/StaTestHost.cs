@@ -15,6 +15,9 @@ namespace Celeste.Wpf.Tests;
 /// </remarks>
 internal static class StaTestHost
 {
+    private static readonly TimeSpan PumpTimeout = TimeSpan.FromSeconds(10);
+    private static readonly TimeSpan PollInterval = TimeSpan.FromMilliseconds(5);
+
     private static readonly Lock Gate = new();
     private static Dispatcher? _dispatcher;
     private static ThemesDictionary? _themes;
@@ -37,6 +40,38 @@ internal static class StaTestHost
                 _themes!.Theme = theme;
                 body();
             });
+        }
+    }
+
+    /// <summary>
+    /// Drains the dispatcher queue until <paramref name="condition"/> holds, the way a running
+    /// application would. Call it from inside <see cref="Run"/>: work that a background operation
+    /// posts back to the UI thread cannot run while a test body is sitting on that thread.
+    /// </summary>
+    /// <param name="condition">What the test is waiting for.</param>
+    /// <param name="because">What to say if it never happens.</param>
+    /// <exception cref="TimeoutException">The condition did not hold within the timeout.</exception>
+    public static void PumpUntil(Func<bool> condition, string because)
+    {
+        ArgumentNullException.ThrowIfNull(condition);
+
+        Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
+        DateTime deadline = DateTime.UtcNow + PumpTimeout;
+
+        while (!condition())
+        {
+            if (DateTime.UtcNow > deadline)
+            {
+                throw new TimeoutException($"Waited {PumpTimeout.TotalSeconds:0} s: {because}");
+            }
+
+            // Invoking at the lowest priority runs everything queued above it first.
+            dispatcher.Invoke(static () => { }, DispatcherPriority.SystemIdle);
+
+            if (!condition())
+            {
+                Thread.Sleep(PollInterval);
+            }
         }
     }
 
