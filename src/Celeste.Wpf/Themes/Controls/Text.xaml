@@ -64,9 +64,15 @@
         <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
     </Style>
 
+    <!--
+        Foreground is set rather than inherited. Label is the one text control whose Windows theme
+        style assigns a foreground of its own, and a theme style beats an inherited value, so a Label
+        left alone paints black on every surface — invisible in the dark theme.
+    -->
     <Style TargetType="{x:Type Label}">
         <Setter Property="Padding" Value="0,0,0,4" />
         <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.Foreground}" />
         <Style.Triggers>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />

@@ -128,6 +128,28 @@ public class ControlTemplateTests
     }
 
     /// <summary>
+    /// Label is the one text control whose Windows theme style assigns a foreground of its own, and a
+    /// theme style beats an inherited value. Celeste has to set the colour rather than let it inherit
+    /// the way every other control does, or the label paints black on every surface.
+    /// </summary>
+    [Theory]
+    [InlineData(ApplicationTheme.Light)]
+    [InlineData(ApplicationTheme.Dark)]
+    public void LabelTakesItsForegroundFromCelesteAndNotFromWindows(ApplicationTheme theme)
+    {
+        StaTestHost.Run(
+            () =>
+            {
+                var label = new Label { Content = "Workspace name" };
+                AssertTemplateApplies(label);
+
+                var expected = (SolidColorBrush)Application.Current.FindResource("Celeste.Brush.Foreground");
+                Assert.Equal(expected.Color, ((SolidColorBrush)label.Foreground).Color);
+            },
+            theme);
+    }
+
+    /// <summary>
     /// A condition inside a template's own triggers is evaluated against the templated parent, and a
     /// control has no templated parent of its own. <see cref="RelativeSourceMode.TemplatedParent"/>
     /// there resolves to nothing, so the condition is never true — silently, with no binding error.
