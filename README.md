@@ -225,7 +225,7 @@ Alpha. The token names and the public control API are still open to change; trea
 
 Not covered yet: `Menu` / `ContextMenu`, `DataGrid`, `TreeView`, `Expander`, `Calendar` / `DatePicker`, and dialogs. Those controls keep their default WPF appearance in a Celeste application, which is visible and jarring. Contributions in that direction are the most useful ones right now. Two areas are filled in: navigation — `Sidebar`, a `SidebarHost` that presents it docked, as a rail, or off-canvas, and a `NavigationHost` that holds pages and a back stack — and pictures, with `ImageView`, `Avatar`, and `MasonryPanel`.
 
-[ROADMAP.md](https://github.com/nicoseijas/Celeste/blob/main/ROADMAP.md) has the order those gaps are being closed in, plus what is deliberately out of scope.
+[ROADMAP.md](https://github.com/nicoseijas/Celeste/blob/main/ROADMAP.md) has the order those gaps are being closed in, plus what is deliberately out of scope. [CHANGELOG.md](https://github.com/nicoseijas/Celeste/blob/main/CHANGELOG.md) has what changed since the last published package.
 
 ## Repository layout
 
