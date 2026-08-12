@@ -11,7 +11,7 @@
   <PropertyGroup Label="NuGet">
     <IsPackable>true</IsPackable>
     <PackageId>Celeste.Wpf</PackageId>
-    <Version>0.1.0-alpha.1</Version>
+    <Version>0.2.0-alpha.1</Version>
     <Description>A modern, themeable UI library for WPF: semantic design tokens, light/dark themes, restyled native controls, and the controls WPF never shipped.</Description>
     <PackageTags>wpf;ui;xaml;theme;dark-mode;controls;design-system;dotnet</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -2,7 +2,7 @@
 
 Consumer-visible changes to `Celeste.Wpf`: what changes for an application that upgrades, rather than what happened in the repository. `0.x` releases may break the API, which is what the version number is telling you.
 
-## Unreleased
+## 0.2.0-alpha.1 — 2026-08-12
 
 ### Added
 
