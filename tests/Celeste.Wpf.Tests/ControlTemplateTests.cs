@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Media;
 using Celeste.Wpf.Controls;
 using Celeste.Wpf.Theming;
@@ -124,6 +125,78 @@ public class ControlTemplateTests
             Assert.True(small.DesiredSize.Height < medium.DesiredSize.Height, "Small measured no smaller than the default.");
             Assert.True(medium.DesiredSize.Height < large.DesiredSize.Height, "Large measured no larger than the default.");
         });
+    }
+
+    /// <summary>
+    /// A condition inside a template's own triggers is evaluated against the templated parent, and a
+    /// control has no templated parent of its own. <see cref="RelativeSourceMode.TemplatedParent"/>
+    /// there resolves to nothing, so the condition is never true — silently, with no binding error.
+    /// </summary>
+    [Fact]
+    public void NoTemplateTriggerConditionBindsToItsTemplatedParent()
+    {
+        StaTestHost.Run(() =>
+        {
+            List<string> offenders = ControlTemplates()
+                .SelectMany(
+                    template => ConditionBindings(template)
+                        .Where(binding => binding.RelativeSource?.Mode == RelativeSourceMode.TemplatedParent)
+                        .Select(binding => $"{template.TargetType.Name}.{binding.Path?.Path}"))
+                .ToList();
+
+            Assert.True(
+                offenders.Count == 0,
+                $"Use RelativeSource Self instead: {string.Join(", ", offenders)}");
+        });
+    }
+
+    private static IEnumerable<ControlTemplate> ControlTemplates() =>
+        StylesIn(Application.Current.Resources)
+            .SelectMany(style => style.Setters.OfType<Setter>())
+            .Select(setter => setter.Value)
+            .OfType<ControlTemplate>();
+
+    private static IEnumerable<Style> StylesIn(ResourceDictionary dictionary)
+    {
+        foreach (ResourceDictionary merged in dictionary.MergedDictionaries)
+        {
+            foreach (Style style in StylesIn(merged))
+            {
+                yield return style;
+            }
+        }
+
+        foreach (object? value in dictionary.Values)
+        {
+            if (value is Style style)
+            {
+                yield return style;
+            }
+        }
+    }
+
+    private static IEnumerable<Binding> ConditionBindings(ControlTemplate template)
+    {
+        foreach (TriggerBase trigger in template.Triggers)
+        {
+            switch (trigger)
+            {
+                case DataTrigger data when data.Binding is Binding binding:
+                    yield return binding;
+                    break;
+
+                case MultiDataTrigger multi:
+                    foreach (Condition condition in multi.Conditions)
+                    {
+                        if (condition.Binding is Binding binding)
+                        {
+                            yield return binding;
+                        }
+                    }
+
+                    break;
+            }
+        }
     }
 
     private static Button Styled(string styleKey) => new()
