@@ -224,7 +224,7 @@
             <TabItem Header="Display">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel>
-                        <celeste:Card Header="Badges">
+                        <celeste:Card Header="Badges" Description="One template, six variants: only the color tokens and the text inside change.">
                             <WrapPanel>
                                 <celeste:Badge Margin="0,0,8,0" Content="Neutral" />
                                 <celeste:Badge Margin="0,0,8,0"
@@ -243,7 +243,9 @@
                             </WrapPanel>
                         </celeste:Card>
 
-                        <celeste:Card Margin="0,16,0,0" Header="Progress">
+                        <celeste:Card Margin="0,16,0,0"
+                                      Header="Progress"
+                                      Description="Determinate reports how far along the work is; indeterminate and the ring only say that it is happening.">
                             <StackPanel>
                                 <ProgressBar Value="42" />
                                 <ProgressBar Margin="0,12,0,0" IsIndeterminate="True" />
@@ -257,7 +259,9 @@
                             </StackPanel>
                         </celeste:Card>
 
-                        <celeste:Card Margin="0,16,0,0" Header="Elevation">
+                        <celeste:Card Margin="0,16,0,0"
+                                      Header="Elevation"
+                                      Description="Shadow depth, not a border, is what separates a card from the surface behind it.">
                             <StackPanel Orientation="Horizontal">
                                 <celeste:Card Width="180"
                                               Margin="0,0,16,0"
@@ -289,15 +293,17 @@
                             </celeste:Card.Footer>
                         </celeste:Card>
 
-                        <celeste:Card Margin="0,16,0,0" Header="List">
-                            <ListBox Height="160">
+                        <celeste:Card Margin="0,16,0,0"
+                                      Header="List"
+                                      Description="Selection follows the platform: click, arrow keys, and Ctrl/Shift-click all work without any wiring.">
+                            <ListBox Height="160" SelectedIndex="2">
                                 <ListBoxItem Content="analytics-service" />
                                 <ListBoxItem Content="billing-worker" />
                                 <ListBoxItem Content="edge-gateway" />
                                 <ListBoxItem Content="identity-provider" />
                                 <ListBoxItem Content="notification-relay" />
                                 <ListBoxItem Content="search-indexer" />
-                                <ListBoxItem Content="webhooks-dispatcher" />
+                                <ListBoxItem Content="webhooks-dispatcher" IsEnabled="False" />
                             </ListBox>
                         </celeste:Card>
                     </StackPanel>
