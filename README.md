@@ -5,7 +5,7 @@ Celeste is a UI library for WPF applications that need to look current without a
 ## What it gives you
 
 - **Light and dark themes** built from the same token names, switchable while the app runs. `ThemeManager.Apply(ApplicationTheme.System)` follows the Windows app theme and keeps following it.
-- **Restyled built-in controls**: `Button`, `TextBox`, `PasswordBox`, `CheckBox`, `RadioButton`, `ComboBox`, `ListBox`, `TabControl`, `Slider`, `ProgressBar`, `ScrollBar`, `ToolTip`, `Label`, `Separator`.
+- **Restyled built-in controls**: `Button`, `ToggleButton`, `TextBox`, `PasswordBox`, `CheckBox`, `RadioButton`, `ComboBox`, `ListBox`, `TabControl`, `Slider`, `ProgressBar`, `ScrollBar`, `ToolTip`, `Label`, `Separator`.
 - **Controls WPF does not have**: `Card`, `Badge`, `ToggleSwitch`, `ProgressRing`, `Avatar`, an `ImageView` that loads and decodes pictures off the UI thread, a `MasonryPanel` that fills the shortest column, and a `Sidebar` that collapses to an icon rail or slides in over the content.
 - **Button variants** — primary, secondary, destructive, outline, ghost, link — that all share one `ControlTemplate`. Defining a new variant means setting three brushes, not copying a template.
 - **A type scale** and layout tokens (spacing, radii, control heights) exposed as XAML resources, so your own controls can sit on the same grid as the library's.

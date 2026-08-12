@@ -50,7 +50,11 @@ The last command builds a throwaway WPF app outside the repository against the p
 
 **Non-color values use `DynamicResource` too, or a literal.** Spacing, radii, and font sizes live outside the theme dictionaries and do not change with the theme, but keeping them dynamic lets consumers override them from application resources.
 
-**Do not add an implicit style for a type WPF uses internally.** An implicit `TextBlock` style overrides the font a `Button` passes down to its own content; an implicit `ScrollViewer` style retemplates the internal `PART_ContentHost` of every `TextBox`. Both are keyed-only in this repository, with a comment explaining why. If you find another case, key it and write down the reason.
+**Do not add an implicit style for a type WPF uses internally.** An implicit `TextBlock` style overrides the font a `Button` passes down to its own content; an implicit `ScrollViewer` style retemplates the internal `PART_ContentHost` of every `TextBox`. Both are keyed-only in this repository, with a comment explaining why.
+
+There is one way out, for a type consumers reach for on their own: make every internal use opt out with `Style="{x:Null}"`. `ToggleButton` takes that route — `ComboBox` is the only template that builds one as chrome, and it opts out. Comment both ends. The opt-out is load-bearing from then on: `Background` and `Template` set through a template survive on precedence alone, so an internal use that forgot it looks fine until someone adds a `Padding` or a `MinWidth` to the implicit style.
+
+If you find another case and it does not clear that bar, key it and write down the reason.
 
 ## Adding a control style
 

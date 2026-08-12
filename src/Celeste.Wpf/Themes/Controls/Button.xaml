@@ -272,6 +272,12 @@
     </Style>
 
     <!--
+        Implicit even though ComboBox builds a ToggleButton as chrome: that one sets Style="{x:Null}".
+        A template that does the same has to opt out too, or it inherits this control's metrics.
+    -->
+    <Style BasedOn="{StaticResource Celeste.ToggleButton}" TargetType="{x:Type ToggleButton}" />
+
+    <!--
         Segment: one option of a segmented choice — Day / Week / Month, list / grid, and so on.
         A RadioButton rather than a ToggleButton, because the two rules that make a row of buttons
         a single choice belong to RadioButton and not to the style: checking one clears the others

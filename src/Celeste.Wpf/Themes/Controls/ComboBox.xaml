@@ -66,6 +66,7 @@
                                 CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(controls:ControlHelper.CornerRadius)}"
                                 Opacity="0" />
 
+                        <!--  Chrome, not a control: without the opt-out the implicit ToggleButton style imposes its metrics here.  -->
                         <ToggleButton x:Name="Toggle"
                                       controls:ControlHelper.CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(controls:ControlHelper.CornerRadius)}"
                                       Background="{TemplateBinding Background}"
@@ -73,7 +74,8 @@
                                       BorderThickness="{TemplateBinding BorderThickness}"
                                       ClickMode="Press"
                                       Focusable="False"
-                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                      Style="{x:Null}">
                             <ToggleButton.Template>
                                 <ControlTemplate TargetType="{x:Type ToggleButton}">
                                     <Border Background="{TemplateBinding Background}"

@@ -24,6 +24,7 @@ public class ControlTemplateTests
         nameof(Button),
         nameof(ToggleButton),
         SegmentStyleKey,
+        nameof(Label),
         nameof(TextBox),
         nameof(PasswordBox),
         nameof(CheckBox),
@@ -128,23 +129,25 @@ public class ControlTemplateTests
     }
 
     /// <summary>
-    /// Label is the one text control whose Windows theme style assigns a foreground of its own, and a
-    /// theme style beats an inherited value. Celeste has to set the colour rather than let it inherit
-    /// the way every other control does, or the label paints black on every surface.
+    /// Label's Windows theme style assigns a foreground that beats the inherited one, and a
+    /// ToggleButton with no implicit style falls through to the same place. Either way the control
+    /// paints black on every surface, which the dark theme turns into invisible text.
     /// </summary>
     [Theory]
-    [InlineData(ApplicationTheme.Light)]
-    [InlineData(ApplicationTheme.Dark)]
-    public void LabelTakesItsForegroundFromCelesteAndNotFromWindows(ApplicationTheme theme)
+    [InlineData(ApplicationTheme.Light, nameof(Label))]
+    [InlineData(ApplicationTheme.Dark, nameof(Label))]
+    [InlineData(ApplicationTheme.Light, nameof(ToggleButton))]
+    [InlineData(ApplicationTheme.Dark, nameof(ToggleButton))]
+    public void ControlsTakeTheirForegroundFromCelesteAndNotFromWindows(ApplicationTheme theme, string controlName)
     {
         StaTestHost.Run(
             () =>
             {
-                var label = new Label { Content = "Workspace name" };
-                AssertTemplateApplies(label);
+                var control = (Control)Create(controlName);
+                AssertTemplateApplies(control);
 
                 var expected = (SolidColorBrush)Application.Current.FindResource("Celeste.Brush.Foreground");
-                Assert.Equal(expected.Color, ((SolidColorBrush)label.Foreground).Color);
+                Assert.Equal(expected.Color, ((SolidColorBrush)control.Foreground).Color);
             },
             theme);
     }
@@ -242,6 +245,7 @@ public class ControlTemplateTests
             Content = "Day",
             Style = (Style)Application.Current.FindResource(SegmentStyleKey),
         },
+        nameof(Label) => new Label { Content = "Workspace name" },
         nameof(TextBox) => new TextBox { Text = "value" },
         nameof(PasswordBox) => new PasswordBox(),
         nameof(CheckBox) => new CheckBox { Content = "Label" },

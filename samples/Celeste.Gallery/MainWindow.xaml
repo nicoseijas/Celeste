@@ -122,7 +122,7 @@
 
                         <celeste:Card Margin="0,16,0,0"
                                       Header="Toggles"
-                                      Description="Segments for a single choice, ToggleSwitch for a setting that applies immediately.">
+                                      Description="Segments for one choice out of several, ToggleButton for a choice that stands on its own, ToggleSwitch for a setting that applies the moment it changes.">
                             <StackPanel>
                                 <StackPanel x:Name="RangeToggles" Orientation="Horizontal">
                                     <RadioButton Margin="0,0,8,0"
@@ -138,6 +138,14 @@
                                                  GroupName="Range"
                                                  Style="{StaticResource Celeste.ToggleButton.Segment}" />
                                 </StackPanel>
+                                <StackPanel Margin="0,16,0,0" Orientation="Horizontal">
+                                    <ToggleButton Margin="0,0,8,0"
+                                                  Content="Show grid"
+                                                  IsChecked="True" />
+                                    <ToggleButton Margin="0,0,8,0" Content="Snap to edges" />
+                                    <ToggleButton Content="Unavailable" IsEnabled="False" />
+                                </StackPanel>
+
                                 <celeste:ToggleSwitch Margin="0,16,0,0"
                                                       Content="Enable notifications"
                                                       IsChecked="True" />
