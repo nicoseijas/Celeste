@@ -7,7 +7,7 @@ Celeste is a UI library for WPF applications that need to look current without a
 - **Light and dark themes** built from the same token names, switchable while the app runs. `ThemeManager.Apply(ApplicationTheme.System)` follows the Windows app theme and keeps following it.
 - **Restyled built-in controls**: `Button`, `ToggleButton`, `TextBox`, `PasswordBox`, `CheckBox`, `RadioButton`, `ComboBox`, `ListBox`, `TabControl`, `Slider`, `ProgressBar`, `ScrollBar`, `ToolTip`, `Label`, `Separator`.
 - **Controls WPF does not have**: `Card`, `Badge`, `ToggleSwitch`, `ProgressRing`, `Avatar`, an `ImageView` that loads and decodes pictures off the UI thread, a `MasonryPanel` that fills the shortest column, and a `Sidebar` that collapses to an icon rail or slides in over the content.
-- **Button variants** — primary, secondary, destructive, outline, ghost, link — that all share one `ControlTemplate`. Defining a new variant means setting three brushes, not copying a template.
+- **Button variants** — `Celeste.Button.Primary`, `.Secondary`, `.Destructive`, `.Outline`, `.Ghost`, `.Link` — that all share one `ControlTemplate`. Defining a new variant means setting three brushes, not copying a template.
 - **A type scale** and layout tokens (spacing, radii, control heights) exposed as XAML resources, so your own controls can sit on the same grid as the library's.
 
 ## Installation
@@ -73,6 +73,41 @@ ThemeManager.Apply(ApplicationTheme.System);  // follow Windows, and keep follow
 ```
 
 `ThemeManager` rewrites the `ThemesDictionary` you merged in `App.xaml`. Controls repaint immediately because every built-in style references color tokens through `DynamicResource`. If your own XAML uses `StaticResource` for a Celeste brush, it will keep the color it was given at load time.
+
+## Buttons
+
+A plain `<Button>` is the secondary variant. The other five are keyed styles, so a button asks for its variant by name:
+
+```xml
+<Button Content="Save" Style="{StaticResource Celeste.Button.Primary}" />
+<Button Content="Delete" Style="{StaticResource Celeste.Button.Destructive}" />
+```
+
+`Celeste.Button.Small` and `Celeste.Button.Large` change the metrics — font size, height, padding — and nothing else. WPF styles do not compose, so a large primary button is a style of your own: `BasedOn` the variant, then repeat those three setters.
+
+For a row of buttons that is a single choice, use `Celeste.ToggleButton.Segment`. It is a `RadioButton` wearing the toggle-button appearance, so one option is checked per `GroupName` and clicking the checked one keeps it checked instead of leaving the choice empty. A `ToggleButton` is styled too, for a choice that stands on its own.
+
+## Text
+
+Celeste defines no implicit `TextBlock` style — one would override the font a `Button` passes down to its own content. Font and foreground come from `Celeste.Window` by inheritance, and the scale is a set of keyed styles:
+
+| Style | What it is for |
+| --- | --- |
+| `Celeste.TextBlock.Body` | The base. Sets text rendering only, so it looks like inherited text. |
+| `Celeste.TextBlock.Muted` | Secondary text: the same size, the muted foreground. |
+| `Celeste.TextBlock.Caption` | Smaller and muted. Labels under a value, timestamps. |
+| `Celeste.TextBlock.Strong` | Body weight raised to SemiBold. |
+| `Celeste.TextBlock.Subtitle` | A heading inside a section. |
+| `Celeste.TextBlock.Title` | A page or dialog heading, in the display face. |
+| `Celeste.TextBlock.Display` | The largest step, for a number or a single line that is the point of the screen. |
+| `Celeste.TextBlock.Code` | Monospace, with `Display` formatting so stems stay on the pixel grid. |
+
+```xml
+<TextBlock Text="Workspace" Style="{StaticResource Celeste.TextBlock.Title}" />
+<TextBlock Text="Everyone with the link can view this." Style="{StaticResource Celeste.TextBlock.Muted}" />
+```
+
+`Label` and `Separator` are styled implicitly and need no key.
 
 ## Navigation
 
@@ -243,7 +278,7 @@ dotnet test
 dotnet run --project samples/Celeste.Gallery
 ```
 
-Requires the .NET 10 SDK (pinned in `global.json`) and Windows. The library itself also builds for `net8.0-windows`.
+Requires Windows and a .NET 10 SDK, 10.0.100 or newer — `global.json` asks for that version with `rollForward: latestFeature`, so any later release band works too. The library itself also builds for `net8.0-windows`.
 
 ## Contributing
 

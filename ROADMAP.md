@@ -4,6 +4,8 @@ What Celeste plans to add, in the order it plans to add it. Items move down the 
 
 Version numbers are `0.x` throughout, so every entry below may break the public API. See [README.md](README.md#status) for what already exists.
 
+The `0.x` headings below group work by theme and by the order it was taken on; they are not the package versions it ships in. Navigation and pictures are marked shipped and went out together in `0.2.0-alpha.1`, while the chrome milestone above them is still open — a milestone moves when something above it turns out to be in the way. [CHANGELOG.md](CHANGELOG.md) is the record of which release actually carried what.
+
 ## Legend
 
 | Mark | Meaning |
@@ -121,7 +123,7 @@ A picture from a URI, loaded and decoded on a background thread and shared betwe
 - `State` — `None`, `Loading`, `Loaded`, `Failed` — is bindable, and a failure raises `ImageFailed` with the exception rather than being swallowed. Celeste writes to no log of yours.
 - Sized by its layout: the width comes from the parent and the height from `AspectRatio`, or the picture's own ratio once known, with a square reserved until then. This is what makes a tile usable in a column whose height nothing else can predict.
 - Corner radius clips the picture properly, which a `Border` around an `Image` does not do.
-- `http`, `https`, `file`, `pack`, and `application`, with relative URIs resolved against the element's base URI. `ImageLoader.HttpClient` is replaceable, and `MaxSourceBytes` refuses an oversized response before it is decoded.
+- `http`, `https`, `file`, and `pack`, with relative URIs resolved against the element's base URI. `ImageLoader.HttpClient` is replaceable, and `MaxSourceBytes` refuses an oversized response before it is decoded.
 
 Still open: the decode width is read once, at the first layout, so a view that grows keeps the bitmap it decoded. Nothing is cached across a session — the weak cache removes duplicate decodes, not duplicate downloads. A superseded load is abandoned rather than cancelled, because the download may be another view's too. There is no automation peer, and no animated-format support beyond the first frame.
 
