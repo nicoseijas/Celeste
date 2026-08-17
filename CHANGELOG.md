@@ -2,6 +2,12 @@
 
 Consumer-visible changes to `Celeste.Wpf`: what changes for an application that upgrades, rather than what happened in the repository. `0.x` releases may break the API, which is what the version number is telling you.
 
+## Unreleased
+
+### Fixed
+
+- Every control inside a `TabControl` page showed the hand cursor. The tab style set `Cursor` on the `TabItem`, and a page is the `TabItem`'s logical child, so the tab answered the cursor query for everything inside it that did not set one of its own. The cursor now belongs to the tab header alone.
+
 ## 0.2.0-alpha.1 — 2026-08-12
 
 ### Added

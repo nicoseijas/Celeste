@@ -78,7 +78,6 @@
     <!--  ===================  TabControl  ===================  -->
     <Style x:Key="Celeste.TabItem" TargetType="{x:Type TabItem}">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="FontWeight" Value="Medium" />
         <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.MutedForeground}" />
@@ -87,7 +86,12 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabItem}">
-                    <Grid x:Name="Root" Background="Transparent">
+                    <!--
+                        The cursor belongs to the header, not to the TabItem: the selected page is
+                        the TabItem's logical child, so a Cursor on the TabItem itself answers the
+                        QueryCursor of everything inside the page as well.
+                    -->
+                    <Grid x:Name="Root" Background="Transparent" Cursor="Hand">
                         <ContentPresenter Margin="{TemplateBinding Padding}"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Center"
@@ -112,7 +116,7 @@
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource Celeste.Brush.Secondary}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Cursor" Value="Arrow" />
+                            <Setter TargetName="Root" Property="Cursor" Value="Arrow" />
                             <Setter Property="Foreground" Value="{DynamicResource Celeste.Brush.DisabledForeground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
