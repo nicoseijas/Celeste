@@ -2,6 +2,10 @@
 
 Celeste is a UI library for WPF applications that need to look current without adopting the Fluent or Material design language. It restyles the controls WPF already ships, adds the few it never did, and drives everything from one set of semantic color tokens that can be swapped at runtime.
 
+![The gallery's Display tab, cut down the middle: the light theme on the left, the dark theme on the right, showing badges, progress bars, card elevation, and a card with a footer](https://raw.githubusercontent.com/nicoseijas/Celeste/main/docs/images/hero.png)
+
+Both halves are the same screen. Every picture here comes out of the sample — `./eng/capture-screenshots.ps1` regenerates them.
+
 ## What it gives you
 
 - **Light and dark themes** built from the same token names, switchable while the app runs. `ThemeManager.Apply(ApplicationTheme.System)` follows the Windows app theme and keeps following it.
@@ -110,6 +114,8 @@ Celeste defines no implicit `TextBlock` style — one would override the font a 
 `Label` and `Separator` are styled implicitly and need no key.
 
 ## Navigation
+
+![A sidebar with a workspace group holding Overview, Reports with a badge of 12, and Members, an account group holding Billing, a disabled Archived item, and Settings pinned to the bottom](https://raw.githubusercontent.com/nicoseijas/Celeste/main/docs/images/navigation-light.png)
 
 `Sidebar` is a `ListBox`, so selection is an ordinary binding and Celeste never owns your navigation state. Setting `IsCollapsed` switches it to an icon rail; the binding runs both ways, so the built-in header chevron and your own layout rules can drive the same property.
 

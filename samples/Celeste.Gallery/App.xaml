@@ -1,8 +1,7 @@
 <Application x:Class="Celeste.Gallery.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:celeste="https://celeste-ui.dev/wpf"
-             StartupUri="MainWindow.xaml">
+             xmlns:celeste="https://celeste-ui.dev/wpf">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

@@ -29,6 +29,18 @@ Two areas sit below the rest on purpose: `SystemThemeWatcher`'s registry-failure
 
 The last command builds a throwaway WPF app outside the repository against the packed `.nupkg`, on both target frameworks. Run it after anything that changes what ships: a new `Themes/` file, a change to the `.csproj`, a new public type.
 
+## Documentation screenshots
+
+The pictures in `docs/images/` are rendered from the gallery, not pasted in from a screen capture:
+
+```powershell
+./eng/capture-screenshots.ps1
+```
+
+It renders every tab in both themes plus the split-theme hero shot, through the gallery's `--capture` switch. Run it when you change how something looks, and commit the pictures that changed with the change — a screenshot that no command can regenerate is a screenshot that silently stops being true.
+
+It is not a visual regression test. Font rasterization differs between machines, so the bytes differ even when nothing did; read the diff yourself.
+
 ## Where things live
 
 | Path | Contents |
