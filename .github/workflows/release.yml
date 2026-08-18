@@ -1,0 +1,83 @@
+name: Release
+
+# The tag is the trigger, and the version in the csproj is the source of truth. The job below refuses
+# to publish when the two disagree, so a mistyped tag fails before anything reaches nuget.org.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: windows-latest
+
+    # nuget.org's trusted publishing policy is registered against this environment name. Renaming it
+    # here without renaming it there makes the token exchange fail.
+    environment: production
+
+    permissions:
+      contents: read
+      # Lets the job mint the OIDC token that nuget.org exchanges for a short-lived API key. No
+      # long-lived key is stored in this repository.
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Verify the tag matches the package version
+        shell: pwsh
+        run: |
+          $project = [xml](Get-Content src/Celeste.Wpf/Celeste.Wpf.csproj)
+          $version = $project.Project.PropertyGroup.Version | Where-Object { $_ }
+          $tag = '${{ github.ref_name }}'.TrimStart('v')
+          if ($version -ne $tag) {
+            throw "Tag '$tag' does not match <Version>$version</Version>."
+          }
+          Write-Host "Publishing Celeste.Wpf $version"
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test --no-build --configuration Release --verbosity normal
+
+      - name: Pack
+        run: dotnet pack src/Celeste.Wpf/Celeste.Wpf.csproj --no-build --configuration Release --output artifacts
+
+      # The same clean-consumer check CI runs. A package that cannot be restored and compiled against
+      # is worth catching here, where the release can still be abandoned; nuget.org does not take
+      # packages back.
+      - name: Validate the package from a clean consumer
+        shell: pwsh
+        run: ./eng/validate-package.ps1 -WorkingDirectory "${{ runner.temp }}/package-validation"
+
+      - name: Exchange the workflow identity for a NuGet API key
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ vars.NUGET_USER }}
+
+      # Pushes the .snupkg found alongside it as well. --skip-duplicate so re-running a job that
+      # already published succeeds instead of failing on a version nuget.org now has.
+      - name: Push
+        run: >
+          dotnet nuget push "artifacts/*.nupkg"
+          --source https://api.nuget.org/v3/index.json
+          --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+          --skip-duplicate
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nupkg
+          path: |
+            artifacts/*.nupkg
+            artifacts/*.snupkg

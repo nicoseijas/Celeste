@@ -99,3 +99,15 @@ A `StaticResource` in one dictionary cannot see a key in a sibling dictionary th
 Commit subjects use `<type>: <description>` — `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`.
 
 A pull request should say what changed, which controls or themes it affects, and how you verified it. A before/after screenshot of the gallery in both themes is worth more than a paragraph for anything visual.
+
+## Releasing
+
+Publishing is a tag push. `.github/workflows/release.yml` builds, tests, packs, and runs the clean-consumer validation again before anything reaches nuget.org, then pushes the `.nupkg` and its `.snupkg`.
+
+1. Set `<Version>` in `src/Celeste.Wpf/Celeste.Wpf.csproj` and move the CHANGELOG's unreleased entries under the new version.
+2. Commit as `chore: release <version>`.
+3. Tag it `v<version>` and push the tag.
+
+The tag and `<Version>` must agree; the workflow stops if they do not, before it builds. Prereleases follow the same path — `v0.3.0-alpha.1` publishes as a prerelease because NuGet reads the suffix.
+
+The workflow authenticates through NuGet trusted publishing: GitHub mints a short-lived OIDC token, nuget.org exchanges it for an API key valid for that run, and this repository stores no publishing credential. The trust policy on nuget.org names the repository, the workflow file, and the `production` environment, so renaming `release.yml` or that environment breaks publishing until the policy is updated to match. The one setting that does live here is the repository variable `NUGET_USER`, which must hold the nuget.org account that owns the policy.
