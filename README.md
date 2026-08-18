@@ -1,5 +1,10 @@
 # Celeste
 
+[![NuGet](https://img.shields.io/nuget/vpre/Celeste.Wpf?logo=nuget&label=NuGet)](https://www.nuget.org/packages/Celeste.Wpf)
+[![CI](https://github.com/nicoseijas/Celeste/actions/workflows/ci.yml/badge.svg)](https://github.com/nicoseijas/Celeste/actions/workflows/ci.yml)
+[![.NET](https://img.shields.io/badge/.NET-8.0%20%7C%2010.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/nicoseijas/Celeste/blob/main/LICENSE)
+
 Celeste is a UI library for WPF applications that need to look current without adopting the Fluent or Material design language. It restyles the controls WPF already ships, adds the few it never did, and drives everything from one set of semantic color tokens that can be swapped at runtime.
 
 ![The gallery's Display tab, cut down the middle: the light theme on the left, the dark theme on the right, showing badges, progress bars, card elevation, and a card with a footer](https://raw.githubusercontent.com/nicoseijas/Celeste/main/docs/images/hero.png)
@@ -16,7 +21,7 @@ Both halves are the same screen. Every picture here comes out of the sample — 
 
 ## Installation
 
-Every release so far is a prerelease, and NuGet hides those unless you ask for them:
+The package is [Celeste.Wpf on nuget.org](https://www.nuget.org/packages/Celeste.Wpf). Every release so far is a prerelease, and NuGet hides those unless you ask for them:
 
 ```powershell
 dotnet add package Celeste.Wpf --prerelease
