@@ -66,11 +66,13 @@ jobs:
         with:
           user: ${{ vars.NUGET_USER }}
 
-      # Pushes the .snupkg found alongside it as well. --skip-duplicate so re-running a job that
-      # already published succeeds instead of failing on a version nuget.org now has.
+      # The separator is a backslash because nuget resolves the wildcard itself and does not accept a
+      # forward slash on Windows. Pushes the .snupkg found alongside the package as well.
+      # --skip-duplicate so re-running a job that already published succeeds instead of failing on a
+      # version nuget.org now has.
       - name: Push
         run: >
-          dotnet nuget push "artifacts/*.nupkg"
+          dotnet nuget push "artifacts\*.nupkg"
           --source https://api.nuget.org/v3/index.json
           --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
           --skip-duplicate
